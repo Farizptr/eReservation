@@ -1,7 +1,14 @@
 // manageorderscreen.js
 
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, StyleSheet, ScrollView, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  ScrollView,
+  Alert,
+} from "react-native";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase.js";
 import { useRole } from "../context/RoleContext.js";
@@ -49,7 +56,9 @@ const ManageOrderScreen = () => {
             <Text style={styles.data}>{JSON.stringify(order, null, 2)}</Text>
             <View style={styles.buttonContainer}>
               <Button
-                onPress={() => handleDownloadPDF(order.id, `Order_${order.id}.pdf`)}
+                onPress={() =>
+                  handleDownloadPDF(order.id, `Order_${order.id}.pdf`)
+                }
                 title={order.logisticapproved ? "Approved" : "Download"}
                 disabled={order.logisticapproved}
               />

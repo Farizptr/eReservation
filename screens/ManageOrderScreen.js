@@ -24,41 +24,45 @@ const ManageOrderScreen = () => {
     try {
       let ordersData = [];
 
-      if (role === "Head of Procurement") {
-        // Define the collections to scan
-        const collectionsToScan = [
-          "FinanceOrder",
-          "SalesOrder",
-          "Human_ControlOrder",
-          "SPIOrder",
-          "Business_DevelopmentOrder",
-          "InfrastructureOrder",
-          "SAPOrder",
-          "Digital_TransformationOrder",
-          "Corporate_SecretaryOrder",
-        ];
-        // Fetch documents from each collection and combine them, filtering by headProcurementapproved
-        const docsPromises = collectionsToScan.map((collectionName) =>
-          getDocs(
-            query(
-              collection(db, collectionName),
-              where("modifiedOrder.headProcurementapproved", "==", false)
-            )
-          )
-        );
-        const snapshots = await Promise.all(docsPromises);
-        snapshots.forEach((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            ordersData.push({ id: doc.id, ...doc.data() });
-          });
-        });
-      } else {
-        // For other roles, fetch from the specific collection
-        const querySnapshot = await getDocs(collection(db, databaseName));
-        querySnapshot.forEach((doc) => {
-          ordersData.push({ id: doc.id, ...doc.data() });
-        });
-      }
+      // if (role === "Head of Procurement") {
+      //   // Define the collections to scan
+      //   const collectionsToScan = [
+      //     "FinanceOrder",
+      //     "SalesOrder",
+      //     "Human_ControlOrder",
+      //     "SPIOrder",
+      //     "Business_DevelopmentOrder",
+      //     "InfrastructureOrder",
+      //     "SAPOrder",
+      //     "Digital_TransformationOrder",
+      //     "Corporate_SecretaryOrder",
+      //   ];
+      //   // Fetch documents from each collection and combine them, filtering by headProcurementapproved
+      //   const docsPromises = collectionsToScan.map((collectionName) =>
+      //     getDocs(
+      //       query(
+      //         collection(db, collectionName),
+      //         where("modifiedOrder.headProcurementapproved", "==", false)
+      //       )
+      //     )
+      //   );
+      //   const snapshots = await Promise.all(docsPromises);
+      //   snapshots.forEach((querySnapshot) => {
+      //     querySnapshot.forEach((doc) => {
+      //       ordersData.push({ id: doc.id, ...doc.data() });
+      //     });
+      //   });
+      // } else {
+      //   // For other roles, fetch from the specific collection
+      //   const querySnapshot = await getDocs(collection(db, databaseName));
+      //   querySnapshot.forEach((doc) => {
+      //     ordersData.push({ id: doc.id, ...doc.data() });
+      //   });
+      // }
+      const querySnapshot = await getDocs(collection(db, databaseName));
+      querySnapshot.forEach((doc) => {
+        ordersData.push({ id: doc.id, ...doc.data() });
+      });
 
       // Set the fetched data to the state
       setData(ordersData);
@@ -116,54 +120,67 @@ const ManageOrderScreen = () => {
 
     try {
       let orderData;
-      if (isHeadOfProcurement) {
-        const collectionsToUpdate = [
-          "FinanceOrder",
-          "SalesOrder",
-          "Human_ControlOrder",
-          "SPIOrder",
-          "Business_DevelopmentOrder",
-          "InfrastructureOrder",
-          "SAPOrder",
-          "Digital_TransformationOrder",
-          "Corporate_SecretaryOrder",
-        ];
+      // if (isHeadOfProcurement) {
+      //   const collectionsToUpdate = [
+      //     "FinanceOrder",
+      //     "SalesOrder",
+      //     "Human_ControlOrder",
+      //     "SPIOrder",
+      //     "Business_DevelopmentOrder",
+      //     "InfrastructureOrder",
+      //     "SAPOrder",
+      //     "Digital_TransformationOrder",
+      //     "Corporate_SecretaryOrder",
+      //   ];
 
-        // Update the document in all collections
-        const updatePromises = collectionsToUpdate.map(
-          async (collectionName) => {
-            const orderRef = doc(db, collectionName, orderId);
-            const docSnap = await getDoc(orderRef);
-            if (docSnap.exists()) {
-              orderData = docSnap.data();
-              await updateDoc(orderRef, {
-                "modifiedOrder.headProcurementapproved": true,
-              });
-              const approvedOrderRef = collection(db, "data_pemesanan");
-              await addDoc(approvedOrderRef, orderData);
+      //   // Update the document in all collections
+      //   const updatePromises = collectionsToUpdate.map(
+      //     async (collectionName) => {
+      //       const orderRef = doc(db, collectionName, orderId);
+      //       const docSnap = await getDoc(orderRef);
+      //       if (docSnap.exists()) {
+      //         orderData = docSnap.data();
+      //         await updateDoc(orderRef, {
+      //           "modifiedOrder.headProcurementapproved": true,
+      //         });
+      // const approvedOrderRef = collection(db, "data_pemesanan");
+      // await addDoc(approvedOrderRef, orderData);
 
-              // Delete the original document
-              await deleteDoc(orderRef);
-            }
-          }
-        );
+      // // Delete the original document
+      // await deleteDoc(orderRef);
+      //       }
+      //     }
+      //   );
 
-        await Promise.all(updatePromises);
-      } else {
-        // Update the document in the specific collection
-        const orderRef = doc(db, databaseName, orderId);
-        const docSnap = await getDoc(orderRef);
-        if (docSnap.exists()) {
-          orderData = docSnap.data();
-          await updateDoc(orderRef, {
-            [approve]: true,
-            "modifiedOrder.headProcurementapproved": false,
-          });
-        }
+      // await Promise.all(updatePromises);
+      // } else {
+      //   // Update the document in the specific collection
+      //   const orderRef = doc(db, databaseName, orderId);
+      //   const docSnap = await getDoc(orderRef);
+      //   if (docSnap.exists()) {
+      //     orderData = docSnap.data();
+      //     await updateDoc(orderRef, {
+      //       [approve]: true,
+      //       "modifiedOrder.headProcurementapproved": false,
+      //     });
+      //   }
+      // }
+      const orderRef = doc(db, databaseName, orderId);
+      const docSnap = await getDoc(orderRef);
+      if (docSnap.exists()) {
+        orderData = docSnap.data();
+        await updateDoc(orderRef, {
+          [approve]: true,
+        });
       }
 
       // Update the local state to reflect the change
       await fetchData();
+      const approvedOrderRef = collection(db, "data_pemesanan");
+      await addDoc(approvedOrderRef, orderData);
+
+      // Delete the original document
+      await deleteDoc(orderRef);
     } catch (error) {
       console.error("Error updating order:", error);
     }
