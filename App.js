@@ -7,8 +7,7 @@ import LoginScreen from "./screens/LoginScreen";
 import OrderScreen from "./screens/OrderScreen";
 import DebugScreen from "./screens/DebugScreen";
 import RequestOrderScreen from "./screens/RequestOrderScreen";
-import KLogistikScreen from "./screens/KLogistikScreen";
-import KKeuanganScreen from "./screens/KKeuanganScreen";
+import KeuanganScreen from "./screens/KeuanganScreen";
 import ManageOrderScreen from "./screens/ManageOrderScreen";
 import PengajuanScreen from "./screens/PengajuanScreen";
 import PemesananScreen from "./screens/PemesananScreen";
@@ -18,6 +17,9 @@ import DataPengajuanScreen from "./screens/DataPengajuanScreen";
 import CustomDrawerContent from "./components/CustomDrawerContent";
 import { RoleProvider } from "./context/RoleContext";
 import { createDrawerNavigator } from "@react-navigation/drawer";
+import ProcurementScreen from "./screens/ProcurementScreen";
+import DirectorScreen from "./screens/DirectorScreen";
+import DokumenPengajuanScreen from "./screens/DokumenPengajuanScreen";
 
 const Drawer = createDrawerNavigator();
 export default function App() {
@@ -40,10 +42,12 @@ export default function App() {
             name="DataPengajuan"
             component={DataPengajuanScreen}/>
           <Drawer.Screen name="Request" component={RequestOrderScreen} />
-          <Drawer.Screen name="KLogistik" component={KLogistikScreen} />
-          <Drawer.Screen name="KKeuangan" component={KKeuanganScreen} />
+          <Drawer.Screen name="Procurement" component={ProcurementScreen} />
+          <Drawer.Screen name="Keuangan" component={KeuanganScreen} />
           <Drawer.Screen name="Debug" component={DebugScreen} />
           <Drawer.Screen name="Logout" component={LogoutScreen} />
+          <Drawer.Screen name="Director" component={DirectorScreen} />
+          <Drawer.Screen name="DokumenPengajuan" component={DokumenPengajuanScreen} />
         </Drawer.Navigator>
       </NavigationContainer>
     </RoleProvider>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useIsFocused } from "@react-navigation/native";
 import { View, Text, Button, StyleSheet, ScrollView } from "react-native";
 import {
   collection,
@@ -15,6 +16,7 @@ import { db } from "../firebase.js";
 import { useRole } from "../context/RoleContext.js";
 
 const ManageOrderScreen = () => {
+  const isFocused = useIsFocused();
   const [data, setData] = useState([]);
   const { role } = useRole();
   const databaseName = role.split(" ")[role.split(" ").length - 1] + "Order";
@@ -23,42 +25,7 @@ const ManageOrderScreen = () => {
   const fetchData = async () => {
     try {
       let ordersData = [];
-
-      // if (role === "Head of Procurement") {
-      //   // Define the collections to scan
-      //   const collectionsToScan = [
-      //     "FinanceOrder",
-      //     "SalesOrder",
-      //     "Human_ControlOrder",
-      //     "SPIOrder",
-      //     "Business_DevelopmentOrder",
-      //     "InfrastructureOrder",
-      //     "SAPOrder",
-      //     "Digital_TransformationOrder",
-      //     "Corporate_SecretaryOrder",
-      //   ];
-      //   // Fetch documents from each collection and combine them, filtering by headProcurementapproved
-      //   const docsPromises = collectionsToScan.map((collectionName) =>
-      //     getDocs(
-      //       query(
-      //         collection(db, collectionName),
-      //         where("modifiedOrder.headProcurementapproved", "==", false)
-      //       )
-      //     )
-      //   );
-      //   const snapshots = await Promise.all(docsPromises);
-      //   snapshots.forEach((querySnapshot) => {
-      //     querySnapshot.forEach((doc) => {
-      //       ordersData.push({ id: doc.id, ...doc.data() });
-      //     });
-      //   });
-      // } else {
-      //   // For other roles, fetch from the specific collection
-      //   const querySnapshot = await getDocs(collection(db, databaseName));
-      //   querySnapshot.forEach((doc) => {
-      //     ordersData.push({ id: doc.id, ...doc.data() });
-      //   });
-      // }
+      console.log("Role ", role);
       const querySnapshot = await getDocs(collection(db, databaseName));
       querySnapshot.forEach((doc) => {
         ordersData.push({ id: doc.id, ...doc.data() });
@@ -74,12 +41,13 @@ const ManageOrderScreen = () => {
 
   // Fetch data when the component mounts
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (isFocused) {
+      fetchData();
+    }
+  }, [isFocused]);
 
   const handleApprove = async (orderId) => {
     let approve = "";
-    let isHeadOfProcurement = role === "Head of Procurement";
     console.log("Role: ", role);
 
     switch (role) {
@@ -120,51 +88,6 @@ const ManageOrderScreen = () => {
 
     try {
       let orderData;
-      // if (isHeadOfProcurement) {
-      //   const collectionsToUpdate = [
-      //     "FinanceOrder",
-      //     "SalesOrder",
-      //     "Human_ControlOrder",
-      //     "SPIOrder",
-      //     "Business_DevelopmentOrder",
-      //     "InfrastructureOrder",
-      //     "SAPOrder",
-      //     "Digital_TransformationOrder",
-      //     "Corporate_SecretaryOrder",
-      //   ];
-
-      //   // Update the document in all collections
-      //   const updatePromises = collectionsToUpdate.map(
-      //     async (collectionName) => {
-      //       const orderRef = doc(db, collectionName, orderId);
-      //       const docSnap = await getDoc(orderRef);
-      //       if (docSnap.exists()) {
-      //         orderData = docSnap.data();
-      //         await updateDoc(orderRef, {
-      //           "modifiedOrder.headProcurementapproved": true,
-      //         });
-      // const approvedOrderRef = collection(db, "data_pemesanan");
-      // await addDoc(approvedOrderRef, orderData);
-
-      // // Delete the original document
-      // await deleteDoc(orderRef);
-      //       }
-      //     }
-      //   );
-
-      // await Promise.all(updatePromises);
-      // } else {
-      //   // Update the document in the specific collection
-      //   const orderRef = doc(db, databaseName, orderId);
-      //   const docSnap = await getDoc(orderRef);
-      //   if (docSnap.exists()) {
-      //     orderData = docSnap.data();
-      //     await updateDoc(orderRef, {
-      //       [approve]: true,
-      //       "modifiedOrder.headProcurementapproved": false,
-      //     });
-      //   }
-      // }
       const orderRef = doc(db, databaseName, orderId);
       const docSnap = await getDoc(orderRef);
       if (docSnap.exists()) {
@@ -175,12 +98,12 @@ const ManageOrderScreen = () => {
       }
 
       // Update the local state to reflect the change
-      await fetchData();
       const approvedOrderRef = collection(db, "data_pemesanan");
       await addDoc(approvedOrderRef, orderData);
-
+      
       // Delete the original document
       await deleteDoc(orderRef);
+      await fetchData();
     } catch (error) {
       console.error("Error updating order:", error);
     }

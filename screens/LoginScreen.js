@@ -44,16 +44,16 @@ const LoginScreen = () => {
       // navigation.navigate("Debug"); // Navigate to the LoginScreen
       switch (role) {
         case "Procurement":
-          navigation.navigate("KLogistik");
+          navigation.navigate("Procurement");
           break;
         case "Head of Procurement":
-          navigation.navigate("KLogistik");
+          navigation.navigate("Procurement");
           break;
-        case "Human_Control":
-          navigation.navigate("ManagePengajuanScreen");
+        case "Director":
+          navigation.navigate("Director");
           break;
-        case "SPI":
-          navigation.navigate("ManagePengajuanScreen");
+        case "Finance":
+          navigation.navigate("Keuangan");
           break;
         default:
           navigation.navigate("Order");

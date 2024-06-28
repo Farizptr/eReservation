@@ -43,7 +43,8 @@ const DebugScreen = () => {
         />
         <Button
           title="Go to Logout"
-          onPress={() => navigation.navigate("Logout")} />
+          onPress={() => navigation.navigate("Logout")}
+        />
       </View>
     </View>
   );

@@ -97,6 +97,7 @@ const OrderScreen = () => {
           satuan: "",
         },
       ]);
+      setCc("");
     } catch (error) {
       console.error("Error adding orders: ", error);
     }

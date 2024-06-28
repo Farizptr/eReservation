@@ -1,12 +1,19 @@
-// KKeuanganScreen.js
+// DokumenPengajuanScreen.js
 
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, StyleSheet, ScrollView, Alert } from "react-native";
-import { collection, getDocs } from "firebase/firestore";
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  ScrollView,
+  Alert,
+} from "react-native";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase.js";
 import { useRole } from "../context/RoleContext.js";
 import { downloadFile } from "./ExportPDF.js";
-const KKeuanganScreen = () => {
+const DokumenPengajuanScreen = () => {
   const [data, setData] = useState([]);
   const { role } = useRole();
   const databaseName = "data_pengajuan";
@@ -15,7 +22,12 @@ const KKeuanganScreen = () => {
   const fetchData = async () => {
     try {
       const ordersData = [];
-      const querySnapshot = await getDocs(collection(db, databaseName));
+      const q = query(
+        collection(db, databaseName),
+        where("modifiedPengajuan.directorapproved", "==", true),
+        where("modifiedPengajuan.headProcurementapproved", "==", true)
+      );
+      const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         ordersData.push({ id: doc.id, ...doc.data() });
       });
@@ -32,7 +44,7 @@ const KKeuanganScreen = () => {
   }, []);
 
   const handleDownloadPDF = (orderId, filename) => {
-    const fileUrl = `http://192.168.100.7:5000/pdf/${orderId}`;
+    const fileUrl = `http://10.88.4.204:5000/pdf/pengajuan/${orderId}`;
     downloadFile(fileUrl, filename);
   };
 
@@ -49,7 +61,9 @@ const KKeuanganScreen = () => {
             <Text style={styles.data}>{JSON.stringify(order, null, 2)}</Text>
             <View style={styles.buttonContainer}>
               <Button
-                onPress={() => handleDownloadPDF(order.id, `Order_${order.id}.pdf`)}
+                onPress={() =>
+                  handleDownloadPDF(order.id, `Order_${order.id}.pdf`)
+                }
                 title={order.logisticapproved ? "Approved" : "Download"}
                 disabled={order.logisticapproved}
               />
@@ -85,4 +99,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default KKeuanganScreen;
+export default DokumenPengajuanScreen;
