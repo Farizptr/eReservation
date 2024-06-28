@@ -41,8 +41,25 @@ const LoginScreen = () => {
       // Alert.alert("Login Successful", `Role: ${role}`);
       const userRole = role; // Replace with the actual user role retrieved from Firestore
       setRole(userRole);
-      navigation.navigate("Debug"); // Navigate to the LoginScreen
-      Alert.alert("Login Successful", "You have been logged in.");
+      // navigation.navigate("Debug"); // Navigate to the LoginScreen
+      switch (role) {
+        case "Procurement":
+          navigation.navigate("KLogistik");
+          break;
+        case "Head of Procurement":
+          navigation.navigate("KLogistik");
+          break;
+        case "Human_Control":
+          navigation.navigate("ManagePengajuanScreen");
+          break;
+        case "SPI":
+          navigation.navigate("ManagePengajuanScreen");
+          break;
+        default:
+          navigation.navigate("Order");
+          break; // Exit the function if the role is not recognized
+      }
+      Alert.alert("Login Successful", `You have been logged in as ${role}!`);
     } catch (error) {
       
       Alert.alert("Login Failed", error.message);

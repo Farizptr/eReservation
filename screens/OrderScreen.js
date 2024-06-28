@@ -7,6 +7,7 @@ import { useRole } from "../context/RoleContext";
 
 const OrderScreen = () => {
   const [tujuan, setTujuan] = useState("");
+  const [cc, setCc] = useState("");
   const { role } = useRole();
   const [orders, setOrders] = useState([
     {
@@ -42,6 +43,7 @@ const OrderScreen = () => {
     const formattedDate = formatDate(currentDate);
     modifiedOrder.date = formattedDate;
     modifiedOrder.tujuan = tujuan;
+    modifiedOrder.cc = cc;
     console.log("Role: ", role);
     switch (role) {
       case "Sales":
@@ -135,6 +137,7 @@ const OrderScreen = () => {
       <Text>Current Tujuan: {tujuan}</Text>
       {orders.map((item, index) => (
         <View key={index} style={styles.orderInputContainer}>
+          <Text>Nama Barang</Text>
           <TextInput
             style={styles.input}
             placeholder="Nama Barang"
@@ -143,6 +146,7 @@ const OrderScreen = () => {
               handleOrderChange(text, index, "nama_barang")
             }
           />
+          <Text>Quantity</Text>
           <TextInput
             style={styles.input}
             placeholder="Kuantitas"
@@ -150,6 +154,14 @@ const OrderScreen = () => {
             value={item.quantity}
             onChangeText={(text) => handleOrderChange(text, index, "quantity")}
           />
+          <Text>Satuan</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Satuan"
+            value={item.satuan}
+            onChangeText={(text) => handleOrderChange(text, index, "satuan")}
+          />
+          <Text>Keterangan</Text>
           <TextInput
             style={styles.input}
             placeholder="Keterangan"
@@ -158,12 +170,7 @@ const OrderScreen = () => {
               handleOrderChange(text, index, "keterangan")
             }
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Satuan"
-            value={item.satuan}
-            onChangeText={(text) => handleOrderChange(text, index, "satuan")}
-          />
+
           <TouchableOpacity
             style={styles.deleteButton}
             onPress={() => handleDeleteOrder(index)}
@@ -172,6 +179,13 @@ const OrderScreen = () => {
           </TouchableOpacity>
         </View>
       ))}
+      <Text>CC</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="CC"
+        value={cc}
+        onChangeText={(text) => setCc(text)}
+      />
       <TouchableOpacity style={styles.button} onPress={handleAddOrder}>
         <Text style={styles.buttonText}>Add another order</Text>
       </TouchableOpacity>

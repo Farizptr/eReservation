@@ -1,6 +1,6 @@
 // App.js
-import React from "react";
 import "react-native-gesture-handler";
+import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "./screens/LoginScreen";
@@ -14,29 +14,37 @@ import PengajuanScreen from "./screens/PengajuanScreen";
 import PemesananScreen from "./screens/PemesananScreen";
 import ManagePengajuanScreen from "./screens/ManagePengajuanScreen";
 import LogoutScreen from "./screens/LogoutScreen";
+import DataPengajuanScreen from "./screens/DataPengajuanScreen";
+import CustomDrawerContent from "./components/CustomDrawerContent";
 import { RoleProvider } from "./context/RoleContext";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 
-const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator();
 export default function App() {
   return (
     <RoleProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Debug">
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Order" component={OrderScreen} />
-          <Stack.Screen name="Request" component={RequestOrderScreen} />
-          <Stack.Screen name="KLogistik" component={KLogistikScreen} />
-          <Stack.Screen name="KKeuangan" component={KKeuanganScreen} />
-          <Stack.Screen name="Debug" component={DebugScreen} />
-          <Stack.Screen name="ManageOrder" component={ManageOrderScreen} />
-          <Stack.Screen name="Pengajuan" component={PengajuanScreen} />
-          <Stack.Screen
+        <Drawer.Navigator 
+        initialRouteName="Login"
+        drawerContent={(props) => <CustomDrawerContent {...props}/>}>
+          <Drawer.Screen name="Login" component={LoginScreen} />
+          <Drawer.Screen name="Order" component={OrderScreen} />
+          <Drawer.Screen name="ManageOrder" component={ManageOrderScreen} />
+          <Drawer.Screen name="Pemesanan" component={PemesananScreen} />
+          <Drawer.Screen name="Pengajuan" component={PengajuanScreen} />
+          <Drawer.Screen
             name="ManagePengajuan"
             component={ManagePengajuanScreen}
           />
-          <Stack.Screen name="Pemesanan" component={PemesananScreen} />
-          <Stack.Screen name="Logout" component={LogoutScreen} />
-        </Stack.Navigator>
+          <Drawer.Screen
+            name="DataPengajuan"
+            component={DataPengajuanScreen}/>
+          <Drawer.Screen name="Request" component={RequestOrderScreen} />
+          <Drawer.Screen name="KLogistik" component={KLogistikScreen} />
+          <Drawer.Screen name="KKeuangan" component={KKeuanganScreen} />
+          <Drawer.Screen name="Debug" component={DebugScreen} />
+          <Drawer.Screen name="Logout" component={LogoutScreen} />
+        </Drawer.Navigator>
       </NavigationContainer>
     </RoleProvider>
   );

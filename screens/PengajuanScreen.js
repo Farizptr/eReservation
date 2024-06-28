@@ -132,6 +132,7 @@ const PengajuanScreen = () => {
           <TextInput
             style={styles.input}
             placeholder="Satuan harga"
+            keyboardType="numeric"
             value={item.satuan_harga}
             onChangeText={(text) =>
               handlePengajuanChange(text, index, "satuan_harga")
