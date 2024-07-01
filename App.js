@@ -9,14 +9,13 @@ import ManageOrderScreen from "./src/screens/ManageOrderScreen";
 import PengajuanScreen from "./src/screens/PengajuanScreen";
 import PemesananScreen from "./src/screens/PemesananScreen";
 import ManagePengajuanScreen from "./src/screens/ManagePengajuanScreen";
-import LogoutScreen from "./src/screens/LogoutScreen";
 import CustomDrawerContent from "./src/components/CustomDrawerContent";
 import { RoleProvider } from "./src/context/RoleContext";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import ProcurementScreen from "./src/screens/ProcurementScreen";
 import DirectorScreen from "./src/screens/DirectorScreen";
 import DokumenPengajuanScreen from "./src/screens/DokumenPengajuanScreen";
-import withRoleCheck from "./src/withRoleCheck";
+import withRoleCheck from "./src/utils/withRoleCheck";
 
 const Drawer = createDrawerNavigator();
 export default function App() {
@@ -38,7 +37,6 @@ export default function App() {
           />
           <Drawer.Screen name="Procurement" component={withRoleCheck(ProcurementScreen,["Head of Procurement","Procurement"])} />
           <Drawer.Screen name="Keuangan" component={withRoleCheck(KeuanganScreen,["Head of Finance","Finance"])} />
-          <Drawer.Screen name="Logout" component={LogoutScreen} />
           <Drawer.Screen
             name="Director"
             component={withRoleCheck(DirectorScreen, ["Director"])}

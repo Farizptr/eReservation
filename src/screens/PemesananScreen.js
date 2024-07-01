@@ -12,7 +12,7 @@ import {
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase.js";
 import { useRole } from "../context/RoleContext.js";
-import { downloadFile } from "./ExportPDF.js";
+import { downloadFile } from "../utils/ExportPDF.js";
 import { useIsFocused } from "@react-navigation/native";
 const ManageOrderScreen = () => {
   const isFocused = useIsFocused();
@@ -43,7 +43,7 @@ const ManageOrderScreen = () => {
   }, [isFocused]);
 
   const handleDownloadPDF = (orderId, filename) => {
-    const fileUrl = `http://192.168.100.7:5000/pdf/pemesanan/${orderId}`;
+    const fileUrl = `http://172.20.10.4:5000/pdf/pemesanan/${orderId}`;
     downloadFile(fileUrl, filename);
   };
 

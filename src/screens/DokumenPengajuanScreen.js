@@ -12,7 +12,7 @@ import {
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebase.js";
 import { useRole } from "../context/RoleContext.js";
-import { downloadFile } from "./ExportPDF.js";
+import { downloadFile } from "../utils/ExportPDF.js";
 const DokumenPengajuanScreen = () => {
   const [data, setData] = useState([]);
   const { role } = useRole();

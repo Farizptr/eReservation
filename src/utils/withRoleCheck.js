@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Alert } from "react-native";
-import { useRole } from "./context/RoleContext"; // Adjust the import path according to your project structure
+import { useRole } from "../context/RoleContext"; // Adjust the import path according to your project structure
 import { useNavigation } from "@react-navigation/native";
 
 const withRoleCheck = (WrappedComponent, requiredRoles) => {
