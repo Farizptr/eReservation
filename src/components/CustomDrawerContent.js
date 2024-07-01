@@ -9,12 +9,6 @@ export default function CustomDrawerContent(props) {
         <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Custom Drawer</Text>
       </View>
       <DrawerItemList {...props} />
-      <TouchableOpacity
-        style={{ margin: 20, padding: 10, backgroundColor: '#ccc' }}
-        onPress={() => alert('Custom Button Pressed')}
-      >
-        <Text>Custom Button</Text>
-      </TouchableOpacity>
     </DrawerContentScrollView>
   );
 }

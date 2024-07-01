@@ -1,19 +1,17 @@
-// DokumenPengajuanScreen.js
-
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { View, Text, Button, StyleSheet, ScrollView } from "react-native";
 import {
-  View,
-  Text,
-  Button,
-  StyleSheet,
-  ScrollView,
-  Alert,
-} from "react-native";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../firebase.js";
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  query,
+  where,
+} from "firebase/firestore";
+import { db } from "../../firebase.js";
 import { useRole } from "../context/RoleContext.js";
-import { downloadFile } from "./ExportPDF.js";
-const DokumenPengajuanScreen = () => {
+
+const ManagePengajuanScreen = () => {
   const [data, setData] = useState([]);
   const { role } = useRole();
   const databaseName = "data_pengajuan";
@@ -21,16 +19,15 @@ const DokumenPengajuanScreen = () => {
   // Function to fetch data from Firestore
   const fetchData = async () => {
     try {
-      const ordersData = [];
-      const q = query(
-        collection(db, databaseName),
-        where("modifiedPengajuan.directorapproved", "==", true),
-        where("modifiedPengajuan.headProcurementapproved", "==", true)
-      );
-      const querySnapshot = await getDocs(q);
+      let ordersData = [];
+
+      // For other roles, fetch from the specific collection
+      const querySnapshot = await getDocs(collection(db, databaseName));
       querySnapshot.forEach((doc) => {
         ordersData.push({ id: doc.id, ...doc.data() });
       });
+
+      // Set the fetched data to the state
       setData(ordersData);
       console.log("Data fetched:", ordersData);
     } catch (error) {
@@ -43,16 +40,39 @@ const DokumenPengajuanScreen = () => {
     fetchData();
   }, []);
 
-  const handleDownloadPDF = (orderId, filename) => {
-    const fileUrl = `http://10.88.4.204:5000/pdf/pengajuan/${orderId}`;
-    downloadFile(fileUrl, filename);
+  const handleApprove = async (orderId) => {
+    let approve = "";
+
+    switch (role) {
+      case "Director":
+        approve = "modifiedPengajuan.directorapproved";
+        break;
+      case "Head of Procurement":
+        approve = "modifiedPengajuan.headProcurementapproved";
+        break;
+      default:
+        console.log("Role not recognized");
+        return; // Exit the function if the role is not recognized
+    }
+
+    try {
+      // Update the document in the specific collection
+      const orderRef = doc(db, databaseName, orderId);
+      await updateDoc(orderRef, {
+        [approve]: true,
+      });
+      // Update the local state to reflect the change
+      await fetchData();
+    } catch (error) {
+      console.error("Error updating order:", error);
+    }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>{role}</Text>
       <Text>User role: {role}</Text>
-      <Text>Database: {databaseName}</Text>
+      <Text>database: {databaseName}</Text>
       {data.length > 0 ? (
         data.map((order) => (
           <View key={order.id} style={styles.orderContainer}>
@@ -61,17 +81,15 @@ const DokumenPengajuanScreen = () => {
             <Text style={styles.data}>{JSON.stringify(order, null, 2)}</Text>
             <View style={styles.buttonContainer}>
               <Button
-                onPress={() =>
-                  handleDownloadPDF(order.id, `Order_${order.id}.pdf`)
-                }
-                title={order.logisticapproved ? "Approved" : "Download"}
+                onPress={() => handleApprove(order.id)}
+                title={order.logisticapproved ? "Approved" : "Approve"}
                 disabled={order.logisticapproved}
               />
             </View>
           </View>
         ))
       ) : (
-        <Text>No data available.</Text>
+        <Text>No data sent by finance.</Text>
       )}
     </ScrollView>
   );
@@ -99,4 +117,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DokumenPengajuanScreen;
+export default ManagePengajuanScreen;

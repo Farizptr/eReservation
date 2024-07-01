@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { View, Text, TextInput, ScrollView, StyleSheet } from "react-native";
 import { collection, addDoc } from "firebase/firestore";
-import { db } from "../firebase"; // Adjust the import path if needed
+import { db } from "../../firebase"; // Adjust the import path if needed
 import { useRole } from "../context/RoleContext";
 
 const PengajuanScreen = () => {
@@ -91,6 +91,7 @@ const PengajuanScreen = () => {
           satuan_harga: "",
         },
       ]);
+      setKeperluan("");
     } catch (error) {
       console.error("Error adding orders: ", error);
     }
@@ -104,6 +105,7 @@ const PengajuanScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Text>Keperluan</Text>
       <TextInput
         style={styles.input}
         placeholder="Keperluan"
@@ -112,6 +114,16 @@ const PengajuanScreen = () => {
       />
       {pengajuan.map((item, index) => (
         <View key={index} style={styles.orderInputContainer}>
+          <Text>Uraian</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Urairan"
+            value={item.uraian}
+            onChangeText={(text) =>
+              handlePengajuanChange(text, index, "uraian")
+            }
+          />
+          <Text>Jumlah</Text>
           <TextInput
             style={styles.input}
             placeholder="Jumlah"
@@ -121,14 +133,7 @@ const PengajuanScreen = () => {
               handlePengajuanChange(text, index, "jumlah")
             }
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Urairan"
-            value={item.uraian}
-            onChangeText={(text) =>
-              handlePengajuanChange(text, index, "uraian")
-            }
-          />
+          <Text>Harga Satuan</Text>
           <TextInput
             style={styles.input}
             placeholder="Satuan harga"

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { signOut } from "firebase/auth";
-import { auth } from "../firebase"; // Ensure this imports correctly
+import { auth } from "../../firebase"; // Ensure this imports correctly
 import { useRole } from "../context/RoleContext";
 import { useNavigation } from "@react-navigation/native";
 

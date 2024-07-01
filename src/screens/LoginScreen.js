@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, Alert, Image } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { collection, getDocs } from "firebase/firestore";
-import { auth, db } from "../firebase"; // Ensure this imports correctly
+import { auth, db } from "../../firebase"; // Ensure this imports correctly
 import { useRole } from "../context/RoleContext";
 import { useNavigation } from "@react-navigation/native";
 
@@ -15,7 +15,6 @@ const LoginScreen = () => {
   const [roles, setRoles] = useState([]);
   const { setRole } = useRole();
   const navigation = useNavigation();
-
 
   useEffect(() => {
     const fetchRoles = async () => {
@@ -61,7 +60,6 @@ const LoginScreen = () => {
       }
       Alert.alert("Login Successful", `You have been logged in as ${role}!`);
     } catch (error) {
-      
       Alert.alert("Login Failed", error.message);
     }
   };
@@ -134,15 +132,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   loginButton: {
-    backgroundColor: '#007bff', // Bootstrap primary button color
+    backgroundColor: "#007bff", // Bootstrap primary button color
     padding: 10,
     borderRadius: 5,
-    width: '80%',
-    alignItems: 'center',
+    width: "80%",
+    alignItems: "center",
     marginVertical: 10, // Adds space above and below the button
   },
   loginButtonText: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 16,
   },
 });

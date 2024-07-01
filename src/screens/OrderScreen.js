@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, TouchableOpacity } from "react-native";
 import { View, Text, TextInput, ScrollView, StyleSheet } from "react-native";
 import { collection, addDoc } from "firebase/firestore";
-import { db } from "../firebase"; // Adjust the import path if needed
+import { db } from "../../firebase"; // Adjust the import path if needed
 import { useRole } from "../context/RoleContext";
 
 const OrderScreen = () => {
@@ -74,7 +74,6 @@ const OrderScreen = () => {
         modifiedOrder.headDigitalTransformationapproved = false;
         break;
       case "Corporate_Secretary":
-        modifiedOrder.headProcurementapproved = false;
         break;
       default:
         console.log("Role not recognized");
@@ -83,9 +82,15 @@ const OrderScreen = () => {
     console.log("Modified Orders: ", modifiedOrder);
 
     try {
-      const ordersCollection = collection(db, databaseName); // Reference to 'orders' collection
-      // Add the entire orders array as one document in the "orders" collection
-      await addDoc(ordersCollection, { modifiedOrder });
+      if (role === "Corporate_Secretary") {
+        const ordersCollection = collection(db, "data_pemesanan"); // Reference to 'orders' collection
+        // Add the entire orders array as one document in the "orders" collection
+        await addDoc(ordersCollection, { modifiedOrder });
+      } else {
+        const ordersCollection = collection(db, databaseName); // Reference to 'orders' collection
+        // Add the entire orders array as one document in the "orders" collection
+        await addDoc(ordersCollection, { modifiedOrder });
+      }
 
       console.log("Orders have been added successfully.");
       // Optionally, you can clear the form after successful submission

@@ -12,7 +12,7 @@ import {
   where,
   deleteDoc,
 } from "firebase/firestore";
-import { db } from "../firebase.js";
+import { db } from "../../firebase.js";
 import { useRole } from "../context/RoleContext.js";
 
 const ManageOrderScreen = () => {
@@ -96,13 +96,25 @@ const ManageOrderScreen = () => {
           [approve]: true,
         });
       }
+      console.log("Order data: ", orderData);
 
       // Update the local state to reflect the change
-      const approvedOrderRef = collection(db, "data_pemesanan");
-      await addDoc(approvedOrderRef, orderData);
-      
-      // Delete the original document
-      await deleteDoc(orderRef);
+      const updatedDocSnap = await getDoc(orderRef);
+      if (updatedDocSnap.exists()) {
+        orderData = updatedDocSnap.data();
+        console.log("Order data after update: ", orderData);
+
+        // Add the updated document to the new collection
+        const approvedOrderRef = collection(db, "data_pemesanan");
+        await addDoc(approvedOrderRef, orderData);
+
+        // Delete the original document
+        await deleteDoc(orderRef);
+
+        // Update the local state to reflect the change
+        await fetchData();
+      }
+
       await fetchData();
     } catch (error) {
       console.error("Error updating order:", error);

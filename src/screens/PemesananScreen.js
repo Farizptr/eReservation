@@ -1,33 +1,33 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, Button, StyleSheet, ScrollView } from "react-native";
-import {
-  collection,
-  getDocs,
-  doc,
-  updateDoc,
-  query,
-  where,
-} from "firebase/firestore";
-import { db } from "../firebase.js";
-import { useRole } from "../context/RoleContext.js";
+// manageorderscreen.js
 
-const ManagePengajuanScreen = () => {
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  ScrollView,
+  Alert,
+} from "react-native";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebase.js";
+import { useRole } from "../context/RoleContext.js";
+import { downloadFile } from "./ExportPDF.js";
+import { useIsFocused } from "@react-navigation/native";
+const ManageOrderScreen = () => {
+  const isFocused = useIsFocused();
   const [data, setData] = useState([]);
   const { role } = useRole();
-  const databaseName = "data_pengajuan";
+  const databaseName = "data_pemesanan";
 
   // Function to fetch data from Firestore
   const fetchData = async () => {
     try {
-      let ordersData = [];
-
-      // For other roles, fetch from the specific collection
+      const ordersData = [];
       const querySnapshot = await getDocs(collection(db, databaseName));
       querySnapshot.forEach((doc) => {
         ordersData.push({ id: doc.id, ...doc.data() });
       });
-
-      // Set the fetched data to the state
       setData(ordersData);
       console.log("Data fetched:", ordersData);
     } catch (error) {
@@ -37,42 +37,21 @@ const ManagePengajuanScreen = () => {
 
   // Fetch data when the component mounts
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  const handleApprove = async (orderId) => {
-    let approve = "";
-
-    switch (role) {
-      case "Director":
-        approve = "modifiedPengajuan.directorapproved";
-        break;
-      case "Head of Procurement":
-        approve = "modifiedPengajuan.headProcurementapproved";
-        break;
-      default:
-        console.log("Role not recognized");
-        return; // Exit the function if the role is not recognized
+    if (isFocused) {
+      fetchData();
     }
+  }, [isFocused]);
 
-    try {
-      // Update the document in the specific collection
-      const orderRef = doc(db, databaseName, orderId);
-      await updateDoc(orderRef, {
-        [approve]: true,
-      });
-      // Update the local state to reflect the change
-      await fetchData();
-    } catch (error) {
-      console.error("Error updating order:", error);
-    }
+  const handleDownloadPDF = (orderId, filename) => {
+    const fileUrl = `http://192.168.100.7:5000/pdf/pemesanan/${orderId}`;
+    downloadFile(fileUrl, filename);
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>{role}</Text>
       <Text>User role: {role}</Text>
-      <Text>database: {databaseName}</Text>
+      <Text>Database: {databaseName}</Text>
       {data.length > 0 ? (
         data.map((order) => (
           <View key={order.id} style={styles.orderContainer}>
@@ -81,15 +60,17 @@ const ManagePengajuanScreen = () => {
             <Text style={styles.data}>{JSON.stringify(order, null, 2)}</Text>
             <View style={styles.buttonContainer}>
               <Button
-                onPress={() => handleApprove(order.id)}
-                title={order.logisticapproved ? "Approved" : "Approve"}
+                onPress={() =>
+                  handleDownloadPDF(order.id, `Order_${order.id}.pdf`)
+                }
+                title={order.logisticapproved ? "Approved" : "Download"}
                 disabled={order.logisticapproved}
               />
             </View>
           </View>
         ))
       ) : (
-        <Text>No data sent by finance.</Text>
+        <Text>No data available.</Text>
       )}
     </ScrollView>
   );
@@ -117,4 +98,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ManagePengajuanScreen;
+export default ManageOrderScreen;

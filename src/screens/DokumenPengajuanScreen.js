@@ -1,4 +1,4 @@
-// DataPengajuanScreen.js
+// DokumenPengajuanScreen.js
 
 import React, { useEffect, useState } from "react";
 import {
@@ -9,11 +9,11 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase.js";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "../../firebase.js";
 import { useRole } from "../context/RoleContext.js";
 import { downloadFile } from "./ExportPDF.js";
-const DataPengajuanScreen = () => {
+const DokumenPengajuanScreen = () => {
   const [data, setData] = useState([]);
   const { role } = useRole();
   const databaseName = "data_pengajuan";
@@ -22,7 +22,12 @@ const DataPengajuanScreen = () => {
   const fetchData = async () => {
     try {
       const ordersData = [];
-      const querySnapshot = await getDocs(collection(db, databaseName));
+      const q = query(
+        collection(db, databaseName),
+        where("modifiedPengajuan.directorapproved", "==", true),
+        where("modifiedPengajuan.headProcurementapproved", "==", true)
+      );
+      const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         ordersData.push({ id: doc.id, ...doc.data() });
       });
@@ -39,7 +44,7 @@ const DataPengajuanScreen = () => {
   }, []);
 
   const handleDownloadPDF = (orderId, filename) => {
-    const fileUrl = `http://10.88.4.204:5000/pdf/pengajuan/${orderId}`;
+    const fileUrl = `http://10.88.4.219:5000/pdf/pengajuan/${orderId}`;
     downloadFile(fileUrl, filename);
   };
 
@@ -94,4 +99,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DataPengajuanScreen;
+export default DokumenPengajuanScreen;
