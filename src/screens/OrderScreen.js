@@ -1,12 +1,20 @@
 import React, { useState } from "react";
-import { Button, TouchableOpacity } from "react-native";
-import { View, Text, TextInput, ScrollView, StyleSheet } from "react-native";
+import { TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../../firebase"; // Adjust the import path if needed
 import { useRole } from "../context/RoleContext";
 
 const OrderScreen = () => {
-  const [tujuan, setTujuan] = useState("");
   const [cc, setCc] = useState("");
   const { role } = useRole();
   const [orders, setOrders] = useState([
@@ -17,6 +25,7 @@ const OrderScreen = () => {
       satuan: "",
     },
   ]);
+  const [loading, setLoading] = useState(false);
 
   const handleAddOrder = () => {
     setOrders([
@@ -30,88 +39,114 @@ const OrderScreen = () => {
     ]);
   };
 
+  const handleDeleteOrder = (index) => {
+    const newOrders = [...orders];
+    newOrders.splice(index, 1);
+    setOrders(newOrders);
+  };
+
   const handleOrderChange = (text, index, field) => {
     const newOrders = [...orders];
     newOrders[index][field] = text;
     setOrders(newOrders);
   };
 
+  const validateOrders = () => {
+    for (let order of orders) {
+      if (
+        !order.nama_barang ||
+        !order.quantity ||
+        !order.satuan ||
+        !order.keterangan ||
+        !cc
+      ) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handlePlaceOrder = async () => {
-    let modifiedOrder = { ...orders }; // Copy the orders object
+    if (!validateOrders()) {
+      Alert.alert(
+        "Validation Error",
+        "Please fill out all fields in each order."
+      );
+      return;
+    }
+
+    setLoading(true);
+
+    let modifiedOrder = {};
     let databaseName = role + "Order";
-    const currentDate = new Date(); // Step 1 & 2: Get current date in ISO string format
+    const currentDate = new Date();
     const formattedDate = formatDate(currentDate);
-    modifiedOrder.date = formattedDate;
-    modifiedOrder.tujuan = tujuan;
-    modifiedOrder.cc = cc;
-    console.log("Role: ", role);
+
+    orders.forEach((order, index) => {
+      modifiedOrder[index] = { ...order };
+    });
+
+    let finalOrder = {
+      ...modifiedOrder,
+      cc: cc,
+      date: formattedDate,
+    };
+
     switch (role) {
       case "Sales":
-        modifiedOrder.headSalesapproved = false;
+        finalOrder.headSalesapproved = false;
         break;
       case "Finance":
-        modifiedOrder.headFinanceapproved = false;
+        finalOrder.headFinanceapproved = false;
         break;
       case "Human_Control":
-        modifiedOrder.headHCapproved = false;
+        finalOrder.headHCapproved = false;
         break;
       case "SPI":
-        modifiedOrder.headSPIapproved = false;
+        finalOrder.headSPIapproved = false;
         break;
       case "Procurement":
-        modifiedOrder.headProcurementapproved = false;
+        finalOrder.headProcurementapproved = false;
         break;
       case "Business_Development":
-        modifiedOrder.headBusinessDevelopmentapproved = false;
+        finalOrder.headBusinessDevelopmentapproved = false;
         break;
       case "Infrastructure":
-        modifiedOrder.headInfrastructureapproved = false;
+        finalOrder.headInfrastructureapproved = false;
         break;
       case "SAP":
-        modifiedOrder.headSAPapproved = false;
+        finalOrder.headSAPapproved = false;
         break;
       case "Digital_Transformation":
-        modifiedOrder.headDigitalTransformationapproved = false;
+        finalOrder.headDigitalTransformationapproved = false;
         break;
       case "Corporate_Secretary":
         break;
       default:
         console.log("Role not recognized");
-        return; // Exit the function if the role is not recognized
+        setLoading(false);
+        return;
     }
-    console.log("Modified Orders: ", modifiedOrder);
 
     try {
-      if (role === "Corporate_Secretary") {
-        const ordersCollection = collection(db, "data_pemesanan"); // Reference to 'orders' collection
-        // Add the entire orders array as one document in the "orders" collection
-        await addDoc(ordersCollection, { modifiedOrder });
-      } else {
-        const ordersCollection = collection(db, databaseName); // Reference to 'orders' collection
-        // Add the entire orders array as one document in the "orders" collection
-        await addDoc(ordersCollection, { modifiedOrder });
-      }
+      const ordersCollection = collection(
+        db,
+        role === "Corporate_Secretary" ? "data_pemesanan" : databaseName
+      );
+      await addDoc(ordersCollection, finalOrder);
 
       console.log("Orders have been added successfully.");
-      // Optionally, you can clear the form after successful submission
+      Alert.alert("Success", "Orders have been added successfully.");
       setOrders([
-        {
-          nama_barang: "",
-          quantity: "",
-          keterangan: "",
-          satuan: "",
-        },
+        { nama_barang: "", quantity: "", keterangan: "", satuan: "" },
       ]);
       setCc("");
     } catch (error) {
       console.error("Error adding orders: ", error);
+      Alert.alert("Error", "Failed to add orders. Please try again.");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const handleDeleteOrder = (index) => {
-    const newOrders = [...orders];
-    newOrders.splice(index, 1);
-    setOrders(newOrders);
   };
 
   function formatDate(date) {
@@ -130,17 +165,13 @@ const OrderScreen = () => {
       "November",
       "Desember",
     ];
-    const monthIndex = date.getMonth(); // getMonth() returns a zero-based index
+    const monthIndex = date.getMonth();
     const year = date.getFullYear();
-
     return `${day} ${monthNames[monthIndex]} ${year}`;
   }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Button title="Konsumsi" onPress={() => setTujuan("KONSUMSI")} />
-      <Button title="Atk/barang" onPress={() => setTujuan("ATK/BARANG")} />
-
-      <Text>Current Tujuan: {tujuan}</Text>
       {orders.map((item, index) => (
         <View key={index} style={styles.orderInputContainer}>
           <Text>Nama Barang</Text>
@@ -161,12 +192,17 @@ const OrderScreen = () => {
             onChangeText={(text) => handleOrderChange(text, index, "quantity")}
           />
           <Text>Satuan</Text>
-          <TextInput
+          <Picker
+            selectedValue={item.satuan}
+            onValueChange={(value) => handleOrderChange(value, index, "satuan")}
             style={styles.input}
-            placeholder="Satuan"
-            value={item.satuan}
-            onChangeText={(text) => handleOrderChange(text, index, "satuan")}
-          />
+          >
+            <Picker.Item label="Pcs" value="Pcs" />
+            <Picker.Item label="Box" value="Box" />
+            <Picker.Item label="Unit" value="unit" />
+            <Picker.Item label="Lusin" value="Lusin" />
+            <Picker.Item label="Pak" value="Pak" />
+          </Picker>
           <Text>Keterangan</Text>
           <TextInput
             style={styles.input}
@@ -176,7 +212,6 @@ const OrderScreen = () => {
               handleOrderChange(text, index, "keterangan")
             }
           />
-
           <TouchableOpacity
             style={styles.deleteButton}
             onPress={() => handleDeleteOrder(index)}
@@ -195,8 +230,16 @@ const OrderScreen = () => {
       <TouchableOpacity style={styles.button} onPress={handleAddOrder}>
         <Text style={styles.buttonText}>Add another order</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={handlePlaceOrder}>
-        <Text style={styles.buttonText}>Place Order</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handlePlaceOrder}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Place Order</Text>
+        )}
       </TouchableOpacity>
     </ScrollView>
   );
@@ -206,6 +249,9 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: "#f5f5f5",
+  },
+  orderInputContainer: {
+    marginBottom: 20,
   },
   input: {
     width: "100%",

@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { useNavigation } from '@react-navigation/native';
 import { useRole } from '../context/RoleContext';
-import useLogout from '../hooks/UseLogout';
+import useLogout from '../hooks/useLogout';
 
 export default function CustomDrawerContent(props) {
   const {role} = useRole();
