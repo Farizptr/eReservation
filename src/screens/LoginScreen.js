@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet, Alert, ImageBackground, Image } from "react-native";
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  StyleSheet,
-  Alert,
-  Image,
-} from "react-native";
 import { TouchableOpacity } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -75,12 +66,12 @@ const LoginScreen = () => {
 
   return (
     <ImageBackground
-      source={require('C:/Users/daffa/Downloads/TUGAS KULIAH DAFFA SASKARA/elog/eReservation/src/assets/images/KS.jpg')}
+      source={require("../assets/images/KS.jpg")}
       style={styles.background}
       imageStyle={{ opacity: 0.1 }}
     >
     <Image
-          source={require('C:/Users/daffa/Downloads/TUGAS KULIAH DAFFA SASKARA/elog/eReservation/src/assets/images/logo-kit1.png')}
+          source={require("../assets/images/logo-kit1.png")}
           style={styles.logo}
         />
    
