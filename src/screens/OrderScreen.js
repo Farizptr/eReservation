@@ -15,8 +15,10 @@ import { db } from "../../firebase"; // Adjust the import path if needed
 import { useRole } from "../context/RoleContext";
 
 const OrderScreen = () => {
+  //Initialize state variables
   const [cc, setCc] = useState("");
   const { role } = useRole();
+
   const [orders, setOrders] = useState([
     {
       nama_barang: "",
@@ -27,6 +29,7 @@ const OrderScreen = () => {
   ]);
   const [loading, setLoading] = useState(false);
 
+  // Function to add a new order
   const handleAddOrder = () => {
     setOrders([
       ...orders,
@@ -39,18 +42,21 @@ const OrderScreen = () => {
     ]);
   };
 
+  // Function to delete an order
   const handleDeleteOrder = (index) => {
     const newOrders = [...orders];
     newOrders.splice(index, 1);
     setOrders(newOrders);
   };
 
+  // Function to handle changes in order fields
   const handleOrderChange = (text, index, field) => {
     const newOrders = [...orders];
     newOrders[index][field] = text;
     setOrders(newOrders);
   };
 
+  // Function to validate orders
   const validateOrders = () => {
     for (let order of orders) {
       if (
@@ -66,6 +72,7 @@ const OrderScreen = () => {
     return true;
   };
 
+  // Function to handle placing an order to database
   const handlePlaceOrder = async () => {
     if (!validateOrders()) {
       Alert.alert(
@@ -78,7 +85,9 @@ const OrderScreen = () => {
     setLoading(true);
 
     let modifiedOrder = {};
-    let databaseName = role + "Order";
+    let databaseName = "data_pemesanan";
+    const status = "Pending";
+    const division = role;
     const currentDate = new Date();
     const formattedDate = formatDate(currentDate);
 
@@ -90,49 +99,12 @@ const OrderScreen = () => {
       ...modifiedOrder,
       cc: cc,
       date: formattedDate,
+      status: status,
+      division: division,
     };
 
-    switch (role) {
-      case "Sales":
-        finalOrder.headSalesapproved = false;
-        break;
-      case "Finance":
-        finalOrder.headFinanceapproved = false;
-        break;
-      case "Human_Control":
-        finalOrder.headHCapproved = false;
-        break;
-      case "SPI":
-        finalOrder.headSPIapproved = false;
-        break;
-      case "Procurement":
-        finalOrder.headProcurementapproved = false;
-        break;
-      case "Business_Development":
-        finalOrder.headBusinessDevelopmentapproved = false;
-        break;
-      case "Infrastructure":
-        finalOrder.headInfrastructureapproved = false;
-        break;
-      case "SAP":
-        finalOrder.headSAPapproved = false;
-        break;
-      case "Digital_Transformation":
-        finalOrder.headDigitalTransformationapproved = false;
-        break;
-      case "Corporate_Secretary":
-        break;
-      default:
-        console.log("Role not recognized");
-        setLoading(false);
-        return;
-    }
-
     try {
-      const ordersCollection = collection(
-        db,
-        role === "Corporate_Secretary" ? "data_pemesanan" : databaseName
-      );
+      const ordersCollection = collection(db, databaseName);
       await addDoc(ordersCollection, finalOrder);
 
       console.log("Orders have been added successfully.");
@@ -149,6 +121,7 @@ const OrderScreen = () => {
     }
   };
 
+  // Function to format date
   function formatDate(date) {
     const day = date.getDate();
     const monthNames = [
