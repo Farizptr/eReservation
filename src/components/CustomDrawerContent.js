@@ -1,15 +1,16 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { useNavigation } from '@react-navigation/native';
 import { useRole } from '../context/RoleContext';
-import useLogout from '../hooks/UseLogout';
+import useLogout from '../hooks/useLogout';
 
 export default function CustomDrawerContent(props) {
-  const {role} = useRole();
+  const { role } = useRole();
   const handleLogout = useLogout();
   const navigation = useNavigation();
   const handleLogin = () => { navigation.navigate("Login") };
+
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.header}>
@@ -19,18 +20,25 @@ export default function CustomDrawerContent(props) {
           <Text style={styles.headerText}>Welcome Guest</Text>
         )}
       </View>
+      
       <View style={styles.divider} />
       <DrawerItemList {...props} />
       <View style={styles.footer}>
-        {role ? (<TouchableOpacity onPress={handleLogout} style={styles.LogoutButton}>
-          <Text style={styles.settingsText}>Logout</Text>
-        </TouchableOpacity>) : (<TouchableOpacity onPress={handleLogin} style={styles.LoginButton}>
-          <Text style={styles.settingsText}>Login</Text>
-        </TouchableOpacity>)}
-        
+        {role ? (
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+            <Text style={styles.settingsText}>Logout</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+            <Text style={styles.settingsText}>Login</Text>
+          </TouchableOpacity>
+          
+        )}
       </View>
+      
     </DrawerContentScrollView>
   );
+  
 }
 
 const styles = StyleSheet.create({
@@ -58,21 +66,32 @@ const styles = StyleSheet.create({
     backgroundColor: '#f4f4f4',
     alignItems: 'center',
   },
-  LogoutButton: {
+  logoutButton: {
     paddingVertical: 10,
     paddingHorizontal: 20,
     backgroundColor: 'red',
     borderRadius: 5,
   },
-  LoginButton: {
+  loginButton: {
     paddingVertical: 10,
     paddingHorizontal: 20,
     backgroundColor: 'blue',
     borderRadius: 5,
   },
-  Text: {
+  settingsText: {
     color: '#fff',
     fontSize: 16,
   },
+  imageContainer: {
+    position: 'absolute',
+    bottom: -10,
+    right: -80,
+    width: 393,
+    height: 51,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+  },
 });
-

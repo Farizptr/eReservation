@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Alert, Image } from "react-native";
+import { View, Text, TextInput, StyleSheet, Alert, ImageBackground, Image } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -65,51 +65,95 @@ const LoginScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sign In</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <Picker
-        selectedValue={role}
-        onValueChange={(itemValue) => setRolee(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="Select Role" value="" />
-        {roles.map((role) => (
-          <Picker.Item key={role.id} label={role.name} value={role.name} />
-        ))}
-      </Picker>
-      <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
-        <Text style={styles.loginButtonText}>Sign In</Text>
-      </TouchableOpacity>
-    </View>
+    <ImageBackground
+      source={require('C:/Users/daffa/Downloads/TUGAS KULIAH DAFFA SASKARA/elog/eReservation/src/assets/images/KS.jpg')}
+      style={styles.background}
+      imageStyle={{ opacity: 0.1 }}
+    >
+    <Image
+          source={require('C:/Users/daffa/Downloads/TUGAS KULIAH DAFFA SASKARA/elog/eReservation/src/assets/images/logo-kit1.png')}
+          style={styles.logo}
+        />
+   
+      <View style={styles.overlay}>
+        
+      <Text style={styles.title1}>E-Procurement</Text>
+        <Text style={styles.title}>Please login to access</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={username}
+          onChangeText={setUsername}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+        <Picker
+          selectedValue={role}
+          onValueChange={(itemValue) => setRolee(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Select Role" value="" />
+          {roles.map((role) => (
+            <Picker.Item key={role.id} label={role.name} value={role.name} />
+          ))}
+        </Picker>
+        <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+          <Text style={styles.loginButtonText}>Sign In</Text>
+        </TouchableOpacity>
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
-    padding: 20,
+  },
+  overlay: {
+    width: '90%',  // Slightly narrower than the full width for padding
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.8)", // Semi-transparent white background
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 100
+  },
+  logo: {
+    width: 300,
+    height:116,
+    padding:-30,
+    resizeMode: "contain",
+    marginBottom: 10, // Adds space between the image and the title
+  },
+  logo2: {
+    width: 160,
+    height:96,
+    padding:2,
+    marginLeft: 25,
+    resizeMode: "contain",
+    marginBottom: 30, // Adds space between the image and the title
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
+    fontSize: 14,
+    // fontWeight: "bold",
+    marginBottom: 4,
     color: "#333",
+    marginTop: 30,
+  },
+  title1: {
+    fontSize: 30,
+    fontWeight: "bold",
+    // fontStyle: "italic",
+    marginBottom: 0,
+    color: "#38B6FF",
+    marginTop: 25,
   },
   input: {
     width: "80%",
