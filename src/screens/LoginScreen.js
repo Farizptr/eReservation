@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet, Alert, ImageBackground, Image } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  Alert,
+  Image,
+} from "react-native";
 import { TouchableOpacity } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { signInWithEmailAndPassword } from "firebase/auth";
