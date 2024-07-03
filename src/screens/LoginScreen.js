@@ -1,66 +1,61 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, Alert, ImageBackground, Image } from "react-native";
+// src/screens/LoginScreen.js
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Alert,
+  ImageBackground,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 import { TouchableOpacity } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { collection, getDocs } from "firebase/firestore";
-import { auth, db } from "../../firebase"; // Ensure this imports correctly
-import { useRole } from "../context/RoleContext";
-import { useNavigation } from "@react-navigation/native";
+import useAuth from "../hooks/useAuth";
+import useRoleNavigation from "../hooks/useRoleNavigation";
 
 const LoginScreen = () => {
+  // Initialize state variables
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRolee] = useState("");
-  const [roles, setRoles] = useState([]);
-  const { setRole } = useRole();
-  const navigation = useNavigation();
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const { login, loading } = useAuth();
+  const navigateBasedOnRole = useRoleNavigation();
 
-  useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const rolesCollection = collection(db, "roles");
-        const roleSnapshot = await getDocs(rolesCollection);
-        const roleList = roleSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setRoles(roleList);
-      } catch (error) {
-        console.error("Error fetching roles: ", error);
-      }
-    };
+  // Function to validate form fields
+  const validateForm = () => {
+    let valid = true;
 
-    fetchRoles();
-  }, []);
+    if (!username) {
+      setUsernameError("Please fill in the field");
+      valid = false;
+    } else {
+      setUsernameError("");
+    }
 
+    if (!password) {
+      setPasswordError("Please fill in the field");
+      valid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    return valid;
+  };
+
+  // Function to handle login
   const handleLogin = async () => {
+    if (!validateForm()) return;
+    
     try {
-      // await signInWithEmailAndPassword(auth, username, password);
-      // Alert.alert("Login Successful", `Role: ${role}`);
-      const userRole = role; // Replace with the actual user role retrieved from Firestore
-      setRole(userRole);
-      // navigation.navigate("Debug"); // Navigate to the LoginScreen
-      switch (role) {
-        case "Procurement":
-          navigation.navigate("Procurement");
-          break;
-        case "Head of Procurement":
-          navigation.navigate("Procurement");
-          break;
-        case "Director":
-          navigation.navigate("Director");
-          break;
-        case "Finance":
-          navigation.navigate("Keuangan");
-          break;
-        default:
-          navigation.navigate("Order");
-          break; // Exit the function if the role is not recognized
-      }
-      Alert.alert("Login Successful", `You have been logged in as ${role}!`);
+      const userRole = await login(username, password);
+      navigateBasedOnRole(userRole);
     } catch (error) {
-      Alert.alert("Login Failed", error.message);
+      console.log("Error during login:", error);
+    } finally {   
+      setUsername("");
+      setPassword("");
     }
   };
 
@@ -70,14 +65,13 @@ const LoginScreen = () => {
       style={styles.background}
       imageStyle={{ opacity: 0.1 }}
     >
-    <Image
-          source={require("../assets/images/logo-kit1.png")}
-          style={styles.logo}
-        />
-   
+      <Image
+        source={require("../assets/images/logo-kit1.png")}
+        style={styles.logo}
+      />
+
       <View style={styles.overlay}>
-        
-      <Text style={styles.title1}>E-Procurement</Text>
+        <Text style={styles.title1}>E-Procurement</Text>
         <Text style={styles.title}>Please login to access</Text>
         <TextInput
           style={styles.input}
@@ -85,6 +79,9 @@ const LoginScreen = () => {
           value={username}
           onChangeText={setUsername}
         />
+        {usernameError ? (
+          <Text style={styles.errorText}>{usernameError}</Text>
+        ) : null}
         <TextInput
           style={styles.input}
           placeholder="Password"
@@ -92,19 +89,16 @@ const LoginScreen = () => {
           value={password}
           onChangeText={setPassword}
         />
-        <Picker
-          selectedValue={role}
-          onValueChange={(itemValue) => setRolee(itemValue)}
-          style={styles.picker}
-        >
-          <Picker.Item label="Select Role" value="" />
-          {roles.map((role) => (
-            <Picker.Item key={role.id} label={role.name} value={role.name} />
-          ))}
-        </Picker>
-        <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
-          <Text style={styles.loginButtonText}>Sign In</Text>
-        </TouchableOpacity>
+        {passwordError ? (
+          <Text style={styles.errorText}>{passwordError}</Text>
+        ) : null}
+        {loading ? (
+          <ActivityIndicator size="large" color="#007bff" />
+        ) : (
+          <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+            <Text style={styles.loginButtonText}>Sign In</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </ImageBackground>
   );
@@ -117,32 +111,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   overlay: {
-    width: '90%',  // Slightly narrower than the full width for padding
+    width: "90%",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.8)", // Semi-transparent white background
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     padding: 10,
     borderRadius: 10,
-    marginBottom: 100
+    marginBottom: 100,
   },
   logo: {
     width: 300,
-    height:116,
-    padding:-30,
+    height: 116,
     resizeMode: "contain",
-    marginBottom: 10, // Adds space between the image and the title
-  },
-  logo2: {
-    width: 160,
-    height:96,
-    padding:2,
-    marginLeft: 25,
-    resizeMode: "contain",
-    marginBottom: 30, // Adds space between the image and the title
+    marginBottom: 10,
   },
   title: {
     fontSize: 14,
-    // fontWeight: "bold",
     marginBottom: 4,
     color: "#333",
     marginTop: 30,
@@ -150,7 +134,6 @@ const styles = StyleSheet.create({
   title1: {
     fontSize: 30,
     fontWeight: "bold",
-    // fontStyle: "italic",
     marginBottom: 0,
     color: "#38B6FF",
     marginTop: 25,
@@ -169,19 +152,18 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  picker: {
-    width: "80%",
-    marginVertical: 10,
-    backgroundColor: "#fff",
-    borderRadius: 10,
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginBottom: 10,
   },
   loginButton: {
-    backgroundColor: "#007bff", // Bootstrap primary button color
+    backgroundColor: "#007bff",
     padding: 10,
     borderRadius: 5,
     width: "80%",
     alignItems: "center",
-    marginVertical: 10, // Adds space above and below the button
+    marginVertical: 10,
   },
   loginButtonText: {
     color: "#ffffff",
