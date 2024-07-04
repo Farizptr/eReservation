@@ -1,28 +1,44 @@
 import React, { useState } from "react";
-import { TouchableOpacity, Alert, ScrollView, ActivityIndicator, StyleSheet, TextInput, View, Text, Modal, Image } from "react-native";
+import {
+  TouchableOpacity,
+  Alert,
+  ScrollView,
+  ActivityIndicator,
+  StyleSheet,
+  TextInput,
+  View,
+  Text,
+  Modal,
+  Image,
+} from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useRole } from "../context/RoleContext";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import YourOrderScreen from './YourOrderScreen';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import YourOrderScreen from "./YourOrderScreen";
 
 const Tab = createBottomTabNavigator();
-const reviewIcon = require('../assets/images/check.png');
-const addIcon = require('../assets/images/add.png');
-const listIcon = require('../assets/images/list.png');
-const orderIcon = require('../assets/images/order.png');
+const reviewIcon = require("../assets/images/check.png");
+const addIcon = require("../assets/images/add.png");
+const listIcon = require("../assets/images/list.png");
+const orderIcon = require("../assets/images/order.png");
 
 const OrderScreen = () => {
   const [cc, setCc] = useState("");
   const { role } = useRole();
-  const [orders, setOrders] = useState([{ nama_barang: "", quantity: "", keterangan: "", satuan: "" }]);
+  const [orders, setOrders] = useState([
+    { nama_barang: "", quantity: "", keterangan: "", satuan: "" },
+  ]);
   const [loading, setLoading] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [focusedInput, setFocusedInput] = useState(null);
 
   const handleAddOrder = () => {
-    setOrders([...orders, { nama_barang: "", quantity: "", keterangan: "", satuan: "" }]);
+    setOrders([
+      ...orders,
+      { nama_barang: "", quantity: "", keterangan: "", satuan: "" },
+    ]);
   };
 
   const handleDeleteOrder = (index) => {
@@ -31,7 +47,10 @@ const OrderScreen = () => {
       newOrders.splice(index, 1);
       setOrders(newOrders);
     } else {
-      Alert.alert("Tidak Bisa Menghapus Semua Order", "Minimal harus ada satu order.");
+      Alert.alert(
+        "Tidak Bisa Menghapus Semua Order",
+        "Minimal harus ada satu order."
+      );
     }
   };
 
@@ -43,7 +62,13 @@ const OrderScreen = () => {
 
   const validateOrders = () => {
     for (let order of orders) {
-      if (!order.nama_barang || !order.quantity || !order.satuan || !order.keterangan || !cc) {
+      if (
+        !order.nama_barang ||
+        !order.quantity ||
+        !order.satuan ||
+        !order.keterangan ||
+        !cc
+      ) {
         return false;
       }
     }
@@ -52,7 +77,10 @@ const OrderScreen = () => {
 
   const handlePlaceOrder = async () => {
     if (!validateOrders()) {
-      Alert.alert("Validation Error", "Please fill out all fields in each order.");
+      Alert.alert(
+        "Validation Error",
+        "Please fill out all fields in each order."
+      );
       return;
     }
 
@@ -60,6 +88,7 @@ const OrderScreen = () => {
 
     let modifiedOrder = {};
     let databaseName = "data_pemesanan";
+    
     const status = "Pending";
     const division = role;
     const currentDate = new Date();
@@ -69,14 +98,22 @@ const OrderScreen = () => {
       modifiedOrder[index] = { ...order };
     });
 
-    let finalOrder = { ...modifiedOrder, cc, date: formattedDate, status, division };
+    let finalOrder = {
+      ...modifiedOrder,
+      cc,
+      date: formattedDate,
+      status,
+      division,
+    };
 
     try {
       const ordersCollection = collection(db, databaseName);
       await addDoc(ordersCollection, finalOrder);
 
       Alert.alert("Success", "Orders have been added successfully.");
-      setOrders([{ nama_barang: "", quantity: "", keterangan: "", satuan: "" }]);
+      setOrders([
+        { nama_barang: "", quantity: "", keterangan: "", satuan: "" },
+      ]);
       setCc("");
       setShowSummary(false);
     } catch (error) {
@@ -88,7 +125,20 @@ const OrderScreen = () => {
 
   const formatDate = (date) => {
     const day = date.getDate();
-    const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    const monthNames = [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
+    ];
     const monthIndex = date.getMonth();
     const year = date.getFullYear();
     const hours = date.getHours().toString().padStart(2, "0");
@@ -113,11 +163,18 @@ const OrderScreen = () => {
           ))}
           <Text>{`CC: ${cc}`}</Text>
           <View style={styles.summaryButtons}>
-            <TouchableOpacity style={styles.button} onPress={() => setShowSummary(false)}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => setShowSummary(false)}
+            >
               <Text style={styles.buttonText1}>Edit</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={handlePlaceOrder}>
-              {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Confirm</Text>}
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Confirm</Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>
@@ -133,11 +190,13 @@ const OrderScreen = () => {
           <TextInput
             style={[
               styles.input,
-              focusedInput === `nama_barang_${index}` && styles.focusedInput
+              focusedInput === `nama_barang_${index}` && styles.focusedInput,
             ]}
             placeholder="Nama Barang"
             value={item.nama_barang}
-            onChangeText={(text) => handleOrderChange(text, index, "nama_barang")}
+            onChangeText={(text) =>
+              handleOrderChange(text, index, "nama_barang")
+            }
             onFocus={() => setFocusedInput(`nama_barang_${index}`)}
             onBlur={() => setFocusedInput(null)}
           />
@@ -145,7 +204,7 @@ const OrderScreen = () => {
           <TextInput
             style={[
               styles.input,
-              focusedInput === `quantity_${index}` && styles.focusedInput
+              focusedInput === `quantity_${index}` && styles.focusedInput,
             ]}
             placeholder="Kuantitas"
             keyboardType="numeric"
@@ -172,25 +231,27 @@ const OrderScreen = () => {
           <TextInput
             style={[
               styles.input,
-              focusedInput === `keterangan_${index}` && styles.focusedInput
+              focusedInput === `keterangan_${index}` && styles.focusedInput,
             ]}
             placeholder="Keterangan"
             value={item.keterangan}
-            onChangeText={(text) => handleOrderChange(text, index, "keterangan")}
+            onChangeText={(text) =>
+              handleOrderChange(text, index, "keterangan")
+            }
             onFocus={() => setFocusedInput(`keterangan_${index}`)}
             onBlur={() => setFocusedInput(null)}
           />
-          <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteOrder(index)}>
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => handleDeleteOrder(index)}
+          >
             <Text style={styles.deleteButtonText}>Delete</Text>
           </TouchableOpacity>
         </View>
       ))}
       <Text style={styles.label}>CC</Text>
       <TextInput
-        style={[
-          styles.input,
-          focusedInput === "cc" && styles.focusedInput
-        ]}
+        style={[styles.input, focusedInput === "cc" && styles.focusedInput]}
         placeholder="CC"
         value={cc}
         onChangeText={(text) => setCc(text)}
@@ -201,7 +262,11 @@ const OrderScreen = () => {
         <Image source={addIcon} style={styles.icon} />
         <Text style={styles.addButtonText}>Add another order</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.reviewButton} onPress={() => setShowSummary(true)} disabled={loading}>
+      <TouchableOpacity
+        style={styles.reviewButton}
+        onPress={() => setShowSummary(true)}
+        disabled={loading}
+      >
         {loading ? (
           <ActivityIndicator color="#fff" />
         ) : (
@@ -357,18 +422,23 @@ export default function App() {
         tabBarIcon: ({ color, size }) => {
           let iconSource;
 
-          if (route.name === 'Order') {
+          if (route.name === "Order") {
             iconSource = orderIcon;
-          } else if (route.name === 'Your Orders') {
+          } else if (route.name === "Your Orders") {
             iconSource = listIcon;
           }
 
-          return <Image source={iconSource} style={{ width: size, height: size, tintColor: color }} />;
+          return (
+            <Image
+              source={iconSource}
+              style={{ width: size, height: size, tintColor: color }}
+            />
+          );
         },
       })}
       tabBarOptions={{
-        activeTintColor: '#38B6FF',
-        inactiveTintColor: 'gray',
+        activeTintColor: "#38B6FF",
+        inactiveTintColor: "gray",
       }}
     >
       <Tab.Screen name="Order" component={OrderScreen} />
