@@ -63,6 +63,28 @@ const ApprovalScreen = () => {
     }
   };
 
+  const handleReject = async (orderId) => {
+    setLoading(true);
+    try {
+      const orderRef = doc(db, databaseName, orderId);
+      const docSnap = await getDoc(orderRef);
+      if (docSnap.exists()) {
+        await updateDoc(orderRef, { status: "rejected" });
+        // Refresh the data
+        const updatedOrdersData = await fetchData(
+          databaseName,
+          "division",
+          division
+        );
+        setData(updatedOrdersData);
+      }
+    } catch (error) {
+      console.error("Error updating order:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>{role}</Text>
@@ -79,6 +101,11 @@ const ApprovalScreen = () => {
               <Button
                 onPress={() => handleApprove(order.id)}
                 title={order.logisticapproved ? "Approved" : "Approve"}
+                disabled={order.logisticapproved}
+              />
+              <Button
+                onPress={() => handleReject(order.id)}
+                title={order.logisticapproved ? "rejected" : "Reject"}
                 disabled={order.logisticapproved}
               />
             </View>
