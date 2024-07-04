@@ -16,6 +16,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import ProcurementScreen from "./src/screens/ProcurementScreen";
 import DirectorScreen from "./src/screens/DirectorScreen";
 import DokumenPengajuanScreen from "./src/screens/DokumenPengajuanScreen";
+import ApprovalScreen from "./src/screens/ApprovalScreen";
 import withRoleCheck from "./src/utils/withRoleCheck";
 
 
@@ -48,6 +49,7 @@ export default function App() {
             component={DokumenPengajuanScreen}
           />
           <Drawer.Screen name="YourOrder" component={yourOrderScreen} />
+          <Drawer.Screen name="Approval" component={ApprovalScreen} />
         </Drawer.Navigator>
       </NavigationContainer>
     </RoleProvider>
