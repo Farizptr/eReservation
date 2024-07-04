@@ -1,14 +1,17 @@
 import React, { useState } from "react";
-import { TouchableOpacity, Alert, ScrollView, ActivityIndicator, StyleSheet, TextInput, View, Text, Modal } from "react-native";
+import { TouchableOpacity, Alert, ScrollView, ActivityIndicator, StyleSheet, TextInput, View, Text, Modal, Image } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useRole } from "../context/RoleContext";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import YourOrderScreen from './YourOrderScreen';
-import Icon from 'react-native-vector-icons/Ionicons';
 
 const Tab = createBottomTabNavigator();
+const reviewIcon = require('../assets/images/check.png');
+const addIcon = require('../assets/images/add.png');
+const listIcon = require('../assets/images/list.png');
+const orderIcon = require('../assets/images/order.png');
 
 const OrderScreen = () => {
   const [cc, setCc] = useState("");
@@ -16,6 +19,7 @@ const OrderScreen = () => {
   const [orders, setOrders] = useState([{ nama_barang: "", quantity: "", keterangan: "", satuan: "" }]);
   const [loading, setLoading] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
+  const [focusedInput, setFocusedInput] = useState(null);
 
   const handleAddOrder = () => {
     setOrders([...orders, { nama_barang: "", quantity: "", keterangan: "", satuan: "" }]);
@@ -27,7 +31,7 @@ const OrderScreen = () => {
       newOrders.splice(index, 1);
       setOrders(newOrders);
     } else {
-      Alert.alert("Tidak Bisa Menghapus Semua Order", "Minimal satu order harus ada.");
+      Alert.alert("Tidak Bisa Menghapus Semua Order", "Minimal harus ada satu order.");
     }
   };
 
@@ -127,18 +131,28 @@ const OrderScreen = () => {
         <View key={index} style={styles.orderInputContainer}>
           <Text style={styles.label}>Nama Barang</Text>
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              focusedInput === `nama_barang_${index}` && styles.focusedInput
+            ]}
             placeholder="Nama Barang"
             value={item.nama_barang}
             onChangeText={(text) => handleOrderChange(text, index, "nama_barang")}
+            onFocus={() => setFocusedInput(`nama_barang_${index}`)}
+            onBlur={() => setFocusedInput(null)}
           />
           <Text style={styles.label}>Quantity</Text>
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              focusedInput === `quantity_${index}` && styles.focusedInput
+            ]}
             placeholder="Kuantitas"
             keyboardType="numeric"
             value={item.quantity}
             onChangeText={(text) => handleOrderChange(text, index, "quantity")}
+            onFocus={() => setFocusedInput(`quantity_${index}`)}
+            onBlur={() => setFocusedInput(null)}
           />
           <Text style={styles.label}>Satuan</Text>
           <Picker
@@ -156,10 +170,15 @@ const OrderScreen = () => {
 
           <Text style={styles.label1}>Keterangan</Text>
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              focusedInput === `keterangan_${index}` && styles.focusedInput
+            ]}
             placeholder="Keterangan"
             value={item.keterangan}
             onChangeText={(text) => handleOrderChange(text, index, "keterangan")}
+            onFocus={() => setFocusedInput(`keterangan_${index}`)}
+            onBlur={() => setFocusedInput(null)}
           />
           <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteOrder(index)}>
             <Text style={styles.deleteButtonText}>Delete</Text>
@@ -168,13 +187,18 @@ const OrderScreen = () => {
       ))}
       <Text style={styles.label}>CC</Text>
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          focusedInput === "cc" && styles.focusedInput
+        ]}
         placeholder="CC"
         value={cc}
         onChangeText={(text) => setCc(text)}
+        onFocus={() => setFocusedInput("cc")}
+        onBlur={() => setFocusedInput(null)}
       />
       <TouchableOpacity style={styles.addButton} onPress={handleAddOrder}>
-        <Icon name="add-circle" size={20} color="#fff" />
+        <Image source={addIcon} style={styles.icon} />
         <Text style={styles.addButtonText}>Add another order</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.reviewButton} onPress={() => setShowSummary(true)} disabled={loading}>
@@ -182,7 +206,7 @@ const OrderScreen = () => {
           <ActivityIndicator color="#fff" />
         ) : (
           <>
-            <Icon name="checkmark-circle" size={20} color="#fff" />
+            <Image source={reviewIcon} style={styles.icon} />
             <Text style={styles.reviewButtonText}>Review & Confirm Order</Text>
           </>
         )}
@@ -197,13 +221,6 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#f5f5f5",
   },
-  container1: {
-    padding: 20,
-    borderRadius: 10,
-    borderColor: "#38B6FF",
-    backgroundColor: "#cccccc",
-    borderRadius: 5,
-  },
   orderInputContainer: {
     marginBottom: 20,
     padding: 15,
@@ -216,7 +233,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   label: {
-    color: "#000000",
+    color: "#000",
     fontSize: 20,
     fontWeight: "bold",
     paddingLeft: 4,
@@ -224,7 +241,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   label1: {
-    color: "#000000",
+    color: "#000",
     fontSize: 20,
     fontWeight: "bold",
     paddingLeft: 4,
@@ -236,47 +253,46 @@ const styles = StyleSheet.create({
     padding: 15,
     marginVertical: 10,
     borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+  },
+  focusedInput: {
     borderColor: "#38B6FF",
-    borderRadius: 5,
-    backgroundColor: "#fff",
   },
   addButton: {
-    flexDirection: 'row',
-    alignItems: "center",
+    flexDirection: "row",
     justifyContent: "center",
-    backgroundColor: "#7acdfe",
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 5,
-    marginTop: 15,
+    alignItems: "center",
+    padding: 15,
+    backgroundColor: "#38B6FF",
+    borderRadius: 8,
+    marginTop: 10,
   },
   addButtonText: {
     color: "#fff",
     fontWeight: "bold",
-    marginLeft: 5,
+    marginLeft: 10,
   },
   reviewButton: {
-    flexDirection: 'row',
-    alignItems: "center",
+    flexDirection: "row",
     justifyContent: "center",
+    alignItems: "center",
+    padding: 15,
     backgroundColor: "#38B6FF",
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 5,
-    marginTop: 15,
+    borderRadius: 8,
+    marginTop: 20,
   },
   reviewButtonText: {
     color: "#fff",
     fontWeight: "bold",
-    marginLeft: 5,
+    marginLeft: 10,
   },
   deleteButton: {
-    alignItems: "center",
-    backgroundColor: "#C70000",
-    padding: 10,
-    borderRadius: 5,
     marginTop: 10,
-    marginVertical: 10,
+    padding: 10,
+    backgroundColor: "#ff4d4d",
+    borderRadius: 8,
+    alignItems: "center",
   },
   deleteButtonText: {
     color: "#fff",
@@ -284,38 +300,40 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    width: '80%',
+    width: "80%",
+    backgroundColor: "#fff",
     padding: 20,
-    backgroundColor: '#fff',
     borderRadius: 10,
-    elevation: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
   },
   summaryTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    textAlign: 'center',
-    color: "#38B6FF",
   },
   summaryItem: {
-    marginBottom: 10,
+    marginBottom: 15,
   },
   summaryButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   button: {
-    alignItems: "center",
-    backgroundColor: "#38B6FF",
     padding: 10,
-    borderRadius: 5,
-    marginVertical: 5,
+    backgroundColor: "#38B6FF",
+    borderRadius: 8,
+    alignItems: "center",
+    flex: 1,
+    marginHorizontal: 5,
   },
   buttonText: {
     color: "#fff",
@@ -324,8 +342,11 @@ const styles = StyleSheet.create({
   buttonText1: {
     color: "#fff",
     fontWeight: "bold",
-    paddingLeft: 10,
-    paddingRight: 10,
+  },
+  icon: {
+    width: 20,
+    height: 20,
+    marginRight: 5,
   },
 });
 
@@ -334,15 +355,15 @@ export default function App() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
-          let iconName;
+          let iconSource;
 
           if (route.name === 'Order') {
-            iconName = 'cart';
+            iconSource = orderIcon;
           } else if (route.name === 'Your Orders') {
-            iconName = 'clipboard';
+            iconSource = listIcon;
           }
 
-          return <Icon name={iconName} size={size} color={color} />;
+          return <Image source={iconSource} style={{ width: size, height: size, tintColor: color }} />;
         },
       })}
       tabBarOptions={{
