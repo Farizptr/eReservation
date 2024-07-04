@@ -26,7 +26,7 @@ const ApprovalScreen = () => {
     const getData = async () => {
       setLoading(true);
       try {
-        const ordersData = await fetchData(databaseName, "division", role);
+        const ordersData = await fetchData(databaseName, "division", division);
         setData(ordersData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -49,7 +49,11 @@ const ApprovalScreen = () => {
       if (docSnap.exists()) {
         await updateDoc(orderRef, { status: "approved" });
         // Refresh the data
-        const updatedOrdersData = await fetchData(databaseName, role);
+        const updatedOrdersData = await fetchData(
+          databaseName,
+          "division",
+          division
+        );
         setData(updatedOrdersData);
       }
     } catch (error) {
