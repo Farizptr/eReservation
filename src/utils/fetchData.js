@@ -3,12 +3,12 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebase.js";
 
-const fetchData = async (databaseName, role) => {
+const fetchData = async (databaseName, condition, value) => {
   try {
     let ordersData = [];
     const q = query(
       collection(db, databaseName),
-      where("division", "==", role)
+      where(condition, "==", value)
     );
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {

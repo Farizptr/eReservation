@@ -1,131 +1,56 @@
-import React, { useState, useEffect } from "react";
-import { useIsFocused } from "@react-navigation/native";
-import { View, Text, Button, StyleSheet, ScrollView } from "react-native";
+// manageorderscreen.js
+
+import React, { useEffect, useState } from "react";
 import {
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-  updateDoc,
-  addDoc,
-  query,
-  where,
-  deleteDoc,
-} from "firebase/firestore";
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  ScrollView,
+  Alert,
+} from "react-native";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase.js";
 import { useRole } from "../context/RoleContext.js";
-
+import { downloadFile } from "../utils/ExportPDF.js";
+import { useIsFocused } from "@react-navigation/native";
+import fetchData from "../utils/fetchData.js";
 const ManageOrderScreen = () => {
   const isFocused = useIsFocused();
   const [data, setData] = useState([]);
   const { role } = useRole();
-  const databaseName = role.split(" ")[role.split(" ").length - 1] + "Order";
+  const databaseName = "data_pemesanan";
+  const [loading, setLoading] = useState(false);
 
   // Function to fetch data from Firestore
-  const fetchData = async () => {
-    try {
-      let ordersData = [];
-      console.log("Role ", role);
-      const querySnapshot = await getDocs(collection(db, databaseName));
-      querySnapshot.forEach((doc) => {
-        ordersData.push({ id: doc.id, ...doc.data() });
-      });
-
-      // Set the fetched data to the state
-      setData(ordersData);
-      console.log("Data fetched:", ordersData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
-  // Fetch data when the component mounts
   useEffect(() => {
+    const getData = async () => {
+      setLoading(true);
+      try {
+        const ordersData = await fetchData(databaseName, "status", "approved");
+        setData(ordersData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (isFocused) {
-      fetchData();
+      getData();
     }
-  }, [isFocused]);
+  }, [isFocused, role]);
 
-  const handleApprove = async (orderId) => {
-    let approve = "";
-    console.log("Role: ", role);
-
-    switch (role) {
-      case "Head of Sales":
-        approve = "modifiedOrder.headSalesapproved";
-        break;
-      case "Head of Finance":
-        approve = "modifiedOrder.headFinanceapproved";
-        break;
-      case "Head of Human_Control":
-        approve = "modifiedOrder.headHCapproved";
-        break;
-      case "Head of SPI":
-        approve = "modifiedOrder.headSPIapproved";
-        break;
-      case "Head of Procurement":
-        approve = "modifiedOrder.headProcurementapproved";
-        break;
-      case "Head of Business_Development":
-        approve = "modifiedOrder.headBusinessDevelopmentapproved";
-        break;
-      case "Head of Infrastructure":
-        approve = "modifiedOrder.headInfrastructureapproved";
-        break;
-      case "Head of SAP":
-        approve = "modifiedOrder.headSAPapproved";
-        break;
-      case "Head of Digital_Transformation":
-        approve = "modifiedOrder.headDigitalTransformationapproved";
-        break;
-      case "Head of Corporate_Secretary":
-        approve = "modifiedOrder.headCorporateSecretaryapproved";
-        break;
-      default:
-        console.log("Role not recognized");
-        return; // Exit the function if the role is not recognized
-    }
-
-    try {
-      let orderData;
-      const orderRef = doc(db, databaseName, orderId);
-      const docSnap = await getDoc(orderRef);
-      if (docSnap.exists()) {
-        orderData = docSnap.data();
-        await updateDoc(orderRef, {
-          [approve]: true,
-        });
-      }
-      console.log("Order data: ", orderData);
-
-      // Update the local state to reflect the change
-      const updatedDocSnap = await getDoc(orderRef);
-      if (updatedDocSnap.exists()) {
-        orderData = updatedDocSnap.data();
-        console.log("Order data after update: ", orderData);
-
-        // Add the updated document to the new collection
-        const approvedOrderRef = collection(db, "data_pemesanan");
-        await addDoc(approvedOrderRef, orderData);
-
-        // Delete the original document
-        await deleteDoc(orderRef);
-
-        // Update the local state to reflect the change
-        await fetchData();
-      }
-
-      await fetchData();
-    } catch (error) {
-      console.error("Error updating order:", error);
-    }
+  const handleDownloadPDF = (orderId, filename) => {
+    const fileUrl = `http://172.20.10.4:5000/pdf/pemesanan/${orderId}`;
+    downloadFile(fileUrl, filename);
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>{role}</Text>
       <Text>User role: {role}</Text>
-      <Text>database: {databaseName}</Text>
+      <Text>Database: {databaseName}</Text>
       {data.length > 0 ? (
         data.map((order) => (
           <View key={order.id} style={styles.orderContainer}>
@@ -134,15 +59,17 @@ const ManageOrderScreen = () => {
             <Text style={styles.data}>{JSON.stringify(order, null, 2)}</Text>
             <View style={styles.buttonContainer}>
               <Button
-                onPress={() => handleApprove(order.id)}
-                title={order.logisticapproved ? "Approved" : "Approve"}
+                onPress={() =>
+                  handleDownloadPDF(order.id, `Order_${order.id}.pdf`)
+                }
+                title={order.logisticapproved ? "Approved" : "Download"}
                 disabled={order.logisticapproved}
               />
             </View>
           </View>
         ))
       ) : (
-        <Text>No data sent by finance.</Text>
+        <Text>No data available.</Text>
       )}
     </ScrollView>
   );

@@ -24,7 +24,7 @@ const ApprovalScreen = () => {
     const getData = async () => {
       setLoading(true);
       try {
-        const ordersData = await fetchData(databaseName, role);
+        const ordersData = await fetchData(databaseName, "division", role);
         setData(ordersData);
       } catch (error) {
         console.error("Error fetching data:", error);
