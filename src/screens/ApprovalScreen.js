@@ -12,24 +12,27 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase.js";
 import { useRole } from "../context/RoleContext.js";
 import fetchData from "../utils/fetchData"; // Adjust the path as necessary
+import getLastWord from "../utils/getLastWord.js";
 
 const ApprovalScreen = () => {
   const isFocused = useIsFocused();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const { role } = useRole();
+  const division = getLastWord(role);
   const databaseName = "data_pemesanan";
 
   useEffect(() => {
     const getData = async () => {
       setLoading(true);
       try {
-        const ordersData = await fetchData(databaseName, role);
+        const ordersData = await fetchData(databaseName, division);
         setData(ordersData);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
+        console.log(division);
       }
     };
 
