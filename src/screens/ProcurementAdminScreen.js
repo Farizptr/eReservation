@@ -3,7 +3,7 @@ import { View, Text, Button } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useRole } from "../context/RoleContext";
 
-const ProcurementScreen = () => {
+const ProcurementAdminScreen = () => {
   const navigation = useNavigation();
   const { role } = useRole();
 
@@ -13,14 +13,17 @@ const ProcurementScreen = () => {
     <View>
       {/* Your JSX here */}
       <Button
-        title="Go to Order"
-        onPress={() => navigation.navigate("Order")}
+        title="Go to Dokumen Pemesanan"
+        onPress={() => navigation.navigate("Pemesanan")}
       />
       <Button
-        title="Go to Admin Screen"
-        onPress={() => navigation.navigate("ProcurementAdmin")}
+        title="Go to Pengajuan Uang Muka"
+        onPress={() => navigation.navigate("Pengajuan")}
       />
-      
+      <Button
+        title="Go to Pertanggung Jawab Uang Muka"
+        onPress={() => navigation.navigate("Pertanggungan")}
+      />
       {role === "Head of Procurement" && (
         <Button
           title="Go to Manage Pengajuan"
@@ -31,4 +34,4 @@ const ProcurementScreen = () => {
   );
 };
 
-export default ProcurementScreen;
+export default ProcurementAdminScreen;
