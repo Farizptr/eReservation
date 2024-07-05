@@ -17,6 +17,7 @@ import ProcurementScreen from "./src/screens/ProcurementScreen";
 import DirectorScreen from "./src/screens/DirectorScreen";
 import DokumenPengajuanScreen from "./src/screens/DokumenPengajuanScreen";
 import ApprovalScreen from "./src/screens/ApprovalScreen";
+import ProcurementAdminScreen from "./src/screens/ProcurementAdminScreen";
 import withRoleCheck from "./src/utils/withRoleCheck";
 
 
@@ -50,6 +51,9 @@ export default function App() {
           />
           <Drawer.Screen name="YourOrder" component={yourOrderScreen} />
           <Drawer.Screen name="Approval" component={ApprovalScreen} />
+          <Drawer.Screen
+            name="ProcurementAdmin"
+            component={ProcurementAdminScreen}/>
         </Drawer.Navigator>
       </NavigationContainer>
     </RoleProvider>
