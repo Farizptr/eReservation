@@ -53,6 +53,18 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
+      <View style={{ flex: 1, backgroundColor: '#38B6FF' }}>
+
+        <View style={{ flex: 10, backgroundColor: '#38B6FF',alignItems: 'left', justifyContent: 'center', marginTop:0, marginLeft:10, }}>
+          <Text style={{color:'white', fontSize:10}}> </Text>
+        </View>
+
+
+        <View style={{ flex: 1, backgroundColor: '#38B6FF', alignItems: 'Left', justifyContent: 'center', marginTop:10, marginLeft:10, marginBottom:10 }}>
+          <Text style={{color:'white', paddingBottom: 15, fontSize:10}}> Krakatau Information Technology </Text>
+        </View>
+
+</View>
     </ScrollView>
   );
 };
