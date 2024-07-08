@@ -12,7 +12,7 @@ import {
   Image,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useRole } from "../context/RoleContext";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -75,6 +75,25 @@ const OrderScreen = () => {
     return true;
   };
 
+  const getNextOrderId = async () => {
+    const orderCounterRef = doc(db, "counters", "orderCounter");
+    const orderCounterDoc = await getDoc(orderCounterRef);
+    
+    let newOrderNumber;
+    if (orderCounterDoc.exists()) {
+        const lastOrderNumber = orderCounterDoc.data().lastOrderNumber;
+        newOrderNumber = lastOrderNumber + 1;
+    } else {
+        newOrderNumber = 1;
+    }
+
+    // Update the counter
+    await setDoc(orderCounterRef, { lastOrderNumber: newOrderNumber });
+
+    // Format the order number with leading zeros
+    return `ORD${String(newOrderNumber).padStart(10, '0')}`;
+  };
+
   const handlePlaceOrder = async () => {
     if (!validateOrders()) {
       Alert.alert(
@@ -88,7 +107,7 @@ const OrderScreen = () => {
 
     let modifiedOrder = {};
     let databaseName = "data_pemesanan";
-    
+
     const status = "Pending";
     const division = role;
     const currentDate = new Date();

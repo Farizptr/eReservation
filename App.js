@@ -19,6 +19,7 @@ import DokumenPengajuanScreen from "./src/screens/DokumenPengajuanScreen";
 import ApprovalScreen from "./src/screens/ApprovalScreen";
 import ProcurementAdminScreen from "./src/screens/ProcurementAdminScreen";
 import HomeScreen from "./src/screens/HomeScreen";
+import AdminScreen from "./src/screens/AdminScreen";
 import withRoleCheck from "./src/utils/withRoleCheck";
 
 
@@ -33,6 +34,7 @@ export default function App() {
         >
           <Drawer.Screen name="Login" component={LoginScreen} />
           <Drawer.Screen name="Order" component={OrderScreen} />
+          <Drawer.Screen name="Admin" component={AdminScreen} />
           <Drawer.Screen name="Home" component={HomeScreen} />
           <Drawer.Screen name="ManageOrder" component={ManageOrderScreen} />
           <Drawer.Screen name="Pemesanan" component={PemesananScreen} />
