@@ -1,5 +1,5 @@
 // src/screens/LoginScreen.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,15 +13,42 @@ import {
 import { TouchableOpacity } from "react-native";
 import useAuth from "../hooks/useAuth";
 import useRoleNavigation from "../hooks/useRoleNavigation";
+import { useNavigation } from "@react-navigation/native";
+import { useRole } from "../context/RoleContext.js";
+
 
 const LoginScreen = () => {
   // Initialize state variables
+  const navigation = useNavigation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const { login, loading } = useAuth();
+  const { role } = useRole();
   const navigateBasedOnRole = useRoleNavigation();
+
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      if (role !== null) {
+        Alert.alert(
+          "Already Logged in",
+          "Udah login",
+          [{ text: "OK", onPress: () => navigation.navigate("Home") }]
+        );
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, role]);
+
+  if (role !== null) {
+    // Prevent the component from rendering if role not included
+    return null;
+  }
+
+
 
   // Function to validate form fields
   const validateForm = () => {
