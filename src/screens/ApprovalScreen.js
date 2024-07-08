@@ -1,61 +1,58 @@
-import React, { useState, useEffect } from "react";
-import { useIsFocused } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  Image,
   StyleSheet,
   ScrollView,
   ActivityIndicator,
+  Image
 } from "react-native";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase.js";
-import { useRole } from "../context/RoleContext.js";
-import fetchData from "../utils/fetchData"; // Adjust the path as necessary
-import getLastWord from "../utils/getLastWord.js";
+import { collection, getDocs, doc, updateDoc, getDoc, query, where } from "firebase/firestore";
+import { db } from "../../firebase";
+import { useRole } from "../context/RoleContext";
+import { useIsFocused } from "@react-navigation/native";
 
 const ApprovalScreen = () => {
   const isFocused = useIsFocused();
-  const [data, setData] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const { role } = useRole();
-  const division = getLastWord(role);
   const databaseName = "data_pemesanan";
 
+  const division = role.split(' ').pop(); // Assuming the role ends with the division name
+
   useEffect(() => {
-    const getData = async () => {
+    const fetchOrders = async () => {
       setLoading(true);
       try {
-        const ordersData = await fetchData(databaseName, "division", division);
-        setData(ordersData);
+        const q = query(collection(db, databaseName), where("division", "==", division));
+        const querySnapshot = await getDocs(q);
+        const ordersData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setOrders(ordersData);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching orders:", error);
       } finally {
         setLoading(false);
-        console.log(division);
       }
     };
 
     if (isFocused) {
-      getData();
+      fetchOrders();
     }
-  }, [isFocused, role]);
+  }, [isFocused, role, division]);
 
   const handleApprove = async (orderId) => {
     setLoading(true);
     try {
       const orderRef = doc(db, databaseName, orderId);
-      const docSnap = await getDoc(orderRef);
-      if (docSnap.exists()) {
-        await updateDoc(orderRef, { status: "approved" });
-        const updatedOrdersData = await fetchData(
-          databaseName,
-          "division",
-          division
-        );
-        setData(updatedOrdersData);
-      }
+      await updateDoc(orderRef, { status: "approved" });
+      // Refresh the data
+      const updatedOrdersData = await fetchOrders();
+      setOrders(updatedOrdersData);
     } catch (error) {
       console.error("Error updating order:", error);
     } finally {
@@ -67,16 +64,10 @@ const ApprovalScreen = () => {
     setLoading(true);
     try {
       const orderRef = doc(db, databaseName, orderId);
-      const docSnap = await getDoc(orderRef);
-      if (docSnap.exists()) {
-        await updateDoc(orderRef, { status: "rejected" });
-        const updatedOrdersData = await fetchData(
-          databaseName,
-          "division",
-          division
-        );
-        setData(updatedOrdersData);
-      }
+      await updateDoc(orderRef, { status: "rejected" });
+      // Refresh the data
+      const updatedOrdersData = await fetchOrders();
+      setOrders(updatedOrdersData);
     } catch (error) {
       console.error("Error updating order:", error);
     } finally {
@@ -89,26 +80,32 @@ const ApprovalScreen = () => {
       <Text style={styles.header}>{role}</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
-      ) : data.length > 0 ? (
-        data.map((order) => (
+      ) : orders.length > 0 ? (
+        orders.map((order) => (
           <View key={order.id} style={styles.orderContainer}>
             <Text style={styles.subHeader}>Order ID: {order.id}</Text>
-            <View style={styles.detailRow}>
-              <Text style={styles.label}>Nama Barang:</Text>
-              <Text style={styles.value}>{order.nama_barang}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.label}>Quantity:</Text>
-              <Text style={styles.value}>{order.quantity}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.label}>Satuan:</Text>
-              <Text style={styles.value}>{order.satuan}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.label}>Keterangan:</Text>
-              <Text style={styles.value}>{order.keterangan}</Text>
-            </View>
+            {Object.values(order).map((item, index) =>
+              item.nama_barang && item.quantity && item.satuan && item.keterangan ? (
+                <View key={index}>
+                  <View style={styles.detailRow}>
+                    <Text style={styles.label}>Nama Barang:</Text>
+                    <Text style={styles.value}>{item.nama_barang}</Text>
+                  </View>
+                  <View style={styles.detailRow}>
+                    <Text style={styles.label}>Quantity:</Text>
+                    <Text style={styles.value}>{item.quantity}</Text>
+                  </View>
+                  <View style={styles.detailRow}>
+                    <Text style={styles.label}>Satuan:</Text>
+                    <Text style={styles.value}>{item.satuan}</Text>
+                  </View>
+                  <View style={styles.detailRow}>
+                    <Text style={styles.label}>Keterangan:</Text>
+                    <Text style={styles.value}>{item.keterangan}</Text>
+                  </View>
+                </View>
+              ) : null
+            )}
             <View style={styles.detailRow}>
               <Text style={styles.label}>Date:</Text>
               <Text style={styles.value}>{order.date}</Text>
@@ -123,12 +120,12 @@ const ApprovalScreen = () => {
             </View>
             <View style={styles.buttonContainer}>
               <TouchableOpacity
-                style={styles.button}
+                style={[styles.button, styles.approveButton]}
                 onPress={() => handleApprove(order.id)}
-                disabled={order.logisticapproved}
+                disabled={order.status === "approved"}
               >
                 <Image
-                  source={require('../assets/images/order.png')}
+                  source={require('../assets/images/check.png')}
                   style={styles.buttonIcon}
                 />
                 <Text style={styles.buttonText}>Approve</Text>
@@ -136,10 +133,10 @@ const ApprovalScreen = () => {
               <TouchableOpacity
                 style={[styles.button, styles.rejectButton]}
                 onPress={() => handleReject(order.id)}
-                disabled={order.logisticapproved}
+                disabled={order.status === "rejected"}
               >
                 <Image
-                  source={require('../assets/images/order.png')}
+                  source={require('../assets/images/cross.png')}
                   style={styles.buttonIcon}
                 />
                 <Text style={styles.buttonText}>Reject</Text>
@@ -148,21 +145,30 @@ const ApprovalScreen = () => {
           </View>
         ))
       ) : (
-        <Text>No data sent by finance.</Text>
+        <Text>No orders available.</Text>
       )}
+      <View style={{flex: 1}}>
+    <View style={{flex: 0.9}}>
+        <ScrollView>
+            <Text style={{marginBottom: 500}}>scrollable section</Text>
+        </ScrollView>
+    </View>
+    <View style={{flex: 0.1}}>
+        <Text>fixed footer</Text>
+    </View>
+</View>
     </ScrollView>
+    
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: "#f5f5f5",
   },
   header: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#38B6FF",
     marginBottom: 20,
   },
   subHeader: {
@@ -174,13 +180,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 5,
+    fontWeight: "bold",
   },
   label: {
     fontWeight: "bold",
   },
   value: {
     fontFamily: "monospace",
-    color: "#000",
+    color: "#333",
   },
   orderContainer: {
     padding: 15,
@@ -196,27 +203,27 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 10,
   },
   button: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#38B6FF",
     padding: 10,
-    borderRadius: 8,
-    width: "48%",
-    justifyContent: "center",
+    borderRadius: 5,
+  },
+  approveButton: {
+    backgroundColor: "#4CAF50",
   },
   rejectButton: {
-    backgroundColor: "#ff4d4d",
+    backgroundColor: "#f44336",
   },
   buttonIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 10,
+    width: 18,
+    height: 18,
+    marginRight: 5,
   },
   buttonText: {
     color: "#fff",
-    fontSize: 16,
     fontWeight: "bold",
   },
 });
