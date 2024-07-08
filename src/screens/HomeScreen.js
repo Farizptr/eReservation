@@ -11,20 +11,20 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require('C:/Users/daffa/Downloads/TUGAS KULIAH DAFFA SASKARA/elog/eReservation/src/assets/images/KSlenskep.png')}
+        source={require('../src/assets/images/KSlenskep.png')}
         style={styles.backgroundImage}
         imageStyle={{ opacity: 0.9 }}
       >
-        <Image source={require('C:/Users/daffa/Downloads/TUGAS KULIAH DAFFA SASKARA/elog/eReservation/src/assets/images/welcom.png')} style={styles.welcome} />
+        <Image source={require('../src/assets/images/welcom.png')} style={styles.welcome} />
         <Text style={styles.welcomeText}>{ role }</Text>
       </ImageBackground>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Order")}>
-          <Image source={require('C:/Users/daffa/Downloads/TUGAS KULIAH DAFFA SASKARA/elog/eReservation/src/assets/images/orderlogofix.png')} style={styles.buttonIcon} />
+          <Image source={require('../src/assets/images/orderlogofix.png')} style={styles.buttonIcon} />
           <Text style={styles.buttonText}>Orders</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("ProcurementAdmin")}>
-          <Image source={require('C:/Users/daffa/Downloads/TUGAS KULIAH DAFFA SASKARA/elog/eReservation/src/assets/images/adminlogofix.png')} style={styles.buttonIcon} />
+          <Image source={require('../src/assets/images/adminlogofix.png')} style={styles.buttonIcon} />
           <Text style={styles.buttonText}>Admin</Text>
         </TouchableOpacity>
       </View>

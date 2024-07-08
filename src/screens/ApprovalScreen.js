@@ -128,7 +128,7 @@ const ApprovalScreen = () => {
                 disabled={order.logisticapproved}
               >
                 <Image
-                  source={require('C:/Users/daffa/Downloads/TUGAS KULIAH DAFFA SASKARA/elog/eReservation/src/assets/images/order.png')}
+                  source={require('../assets/images/order.png')}
                   style={styles.buttonIcon}
                 />
                 <Text style={styles.buttonText}>Approve</Text>
@@ -139,7 +139,7 @@ const ApprovalScreen = () => {
                 disabled={order.logisticapproved}
               >
                 <Image
-                  source={require('C:/Users/daffa/Downloads/TUGAS KULIAH DAFFA SASKARA/elog/eReservation/src/assets/images/order.png')}
+                  source={require('../assets/images/order.png')}
                   style={styles.buttonIcon}
                 />
                 <Text style={styles.buttonText}>Reject</Text>
