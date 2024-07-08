@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, Button, ImageBackground, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useRole } from "../context/RoleContext";
+import { ScrollView } from "react-native-gesture-handler";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -9,26 +10,28 @@ const HomeScreen = () => {
 
 
   return (
+    <ScrollView>
     <View style={styles.container}>
       <ImageBackground
-        source={require('../src/assets/images/KSlenskep.png')}
+        source={require('../assets/images/KSlenskep.png')}
         style={styles.backgroundImage}
         imageStyle={{ opacity: 0.9 }}
       >
-        <Image source={require('../src/assets/images/welcom.png')} style={styles.welcome} />
+        <Image source={require('../assets/images/welcom.png')} style={styles.welcome} />
         <Text style={styles.welcomeText}>{ role }</Text>
       </ImageBackground>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Order")}>
-          <Image source={require('../src/assets/images/orderlogofix.png')} style={styles.buttonIcon} />
+          <Image source={require('../assets/images/orderlogofix.png')} style={styles.buttonIcon} />
           <Text style={styles.buttonText}>Orders</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("ProcurementAdmin")}>
-          <Image source={require('../src/assets/images/adminlogofix.png')} style={styles.buttonIcon} />
+          <Image source={require('../assets/images/adminlogofix.png')} style={styles.buttonIcon} />
           <Text style={styles.buttonText}>Admin</Text>
         </TouchableOpacity>
       </View>
     </View>
+    </ScrollView>
   );
 };
 
