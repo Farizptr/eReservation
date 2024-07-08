@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TouchableOpacity,
   Alert,
@@ -12,7 +12,7 @@ import {
   Image,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { collection, addDoc, doc } from "firebase/firestore";
+import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useRole } from "../context/RoleContext";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -33,6 +33,23 @@ const OrderScreen = () => {
   const [loading, setLoading] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [focusedInput, setFocusedInput] = useState(null);
+  const [lastOrderId, setLastOrderId] = useState(null);
+
+  useEffect(() => {
+    const fetchLastOrderId = async () => {
+      try {
+        const lastOrderDoc = await getDoc(doc(db, "meta", "lastOrderId"));
+        if (lastOrderDoc.exists()) {
+          setLastOrderId(lastOrderDoc.data().lastOrderId);
+        } else {
+          setLastOrderId("ORD0000000000");
+        }
+      } catch (error) {
+        console.error("Failed to fetch last order ID:", error);
+      }
+    };
+    fetchLastOrderId();
+  }, []);
 
   const handleAddOrder = () => {
     setOrders([
@@ -75,23 +92,9 @@ const OrderScreen = () => {
     return true;
   };
 
-  const getNextOrderId = async () => {
-    const orderCounterRef = doc(db, "counters", "orderCounter");
-    const orderCounterDoc = await getDoc(orderCounterRef);
-    
-    let newOrderNumber;
-    if (orderCounterDoc.exists()) {
-        const lastOrderNumber = orderCounterDoc.data().lastOrderNumber;
-        newOrderNumber = lastOrderNumber + 1;
-    } else {
-        newOrderNumber = 1;
-    }
-
-    // Update the counter
-    await setDoc(orderCounterRef, { lastOrderNumber: newOrderNumber });
-
-    // Format the order number with leading zeros
-    return `ORD${String(newOrderNumber).padStart(10, '0')}`;
+  const generateNewOrderId = (lastOrderId) => {
+    const orderNumber = parseInt(lastOrderId.substring(3)) + 1;
+    return `ORD${orderNumber.toString().padStart(10, "0")}`;
   };
 
   const handlePlaceOrder = async () => {
@@ -105,6 +108,7 @@ const OrderScreen = () => {
 
     setLoading(true);
 
+    const newOrderId = generateNewOrderId(lastOrderId);
     let modifiedOrder = {};
     let databaseName = "data_pemesanan";
 
@@ -126,8 +130,10 @@ const OrderScreen = () => {
     };
 
     try {
-      const ordersCollection = collection(db, databaseName);
-      await addDoc(ordersCollection, finalOrder);
+      const orderDoc = doc(db, databaseName, newOrderId);
+      await setDoc(orderDoc, finalOrder);
+
+      await setDoc(doc(db, "meta", "lastOrderId"), { lastOrderId: newOrderId });
 
       Alert.alert("Success", "Orders have been added successfully.");
       setOrders([
@@ -135,6 +141,7 @@ const OrderScreen = () => {
       ]);
       setCc("");
       setShowSummary(false);
+      setLastOrderId(newOrderId);
     } catch (error) {
       Alert.alert("Error", "Failed to add orders. Please try again.");
     } finally {
