@@ -18,7 +18,7 @@ const HomeScreen = () => {
       />
       <Button
         title="Go to Admin Screen"
-        onPress={() => navigation.navigate("ProcurementAdmin")}
+        onPress={() => navigation.navigate("Admin")}
       />
       
     </View>
