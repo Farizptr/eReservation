@@ -39,7 +39,6 @@ const HomeScreen = () => {
               source={require("../assets/images/orderlogofix.png")}
               style={styles.buttonIcon}
             />
-            <Text style={styles.buttonText}>Orders</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
@@ -49,7 +48,6 @@ const HomeScreen = () => {
               source={require("../assets/images/adminlogofix.png")}
               style={styles.buttonIcon}
             />
-            <Text style={styles.buttonText}>Admin</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -72,7 +70,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#FFFFFF",
   },
   backgroundImage: {
     width: "100%",
@@ -101,20 +99,18 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 0,
-    justifyContent: "center",
     alignItems: "center",
   },
   button: {
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.7)",
     padding: 15,
     borderRadius: 8,
     marginVertical: 30,
     width: "70%",
   },
   buttonIcon: {
-    width: 160,
-    height: 160,
+    width: 248,
+    height: 230,
     marginRight: 10,
   },
   buttonText: {
