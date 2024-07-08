@@ -20,7 +20,7 @@ const ApprovalScreen = () => {
   const { role } = useRole();
   const databaseName = "data_pemesanan";
 
-  const division = role.split(' ').pop(); // Assuming the role ends with the division name
+  const division = role ? role.split(' ').pop() : "Guest"; // Assuming the role ends with the division name
 
   const fetchOrders = async () => {
     setLoading(true);
