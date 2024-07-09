@@ -1,9 +1,16 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { View, Text, Button, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Alert,
+  ImageBackground,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useRole } from "../context/RoleContext";
-import { ScrollView } from "react-native-gesture-handler";
 
 const AdminScreen = () => {
   const navigation = useNavigation();
@@ -16,13 +23,11 @@ const AdminScreen = () => {
     "Head of SAP",
     "Head of SPI",
     "Head of Sales",
-    "Head of Finance",
     "Head of Infrastructure",
     "Head of Digital_Transformation",
     "Head of Business_Development",
   ];
 
-  // Your code here
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       if (!allowedRoles.includes(role)) {
@@ -38,36 +43,101 @@ const AdminScreen = () => {
   }, [navigation, role, allowedRoles]);
 
   if (!allowedRoles.includes(role)) {
-    // Prevent the component from rendering if role not included
     return null;
   }
 
-  return (
+  const buttons = [
     
-    <ScrollView>
-    <View>
-      {/* Your JSX here */}
-      <Button
-        title="Manage Pengajuan Uang Muka"
-        onPress={() => navigation.navigate("ManagePengajuan")}
-      />
-      <Button
-        title="Approval"
-        onPress={() => navigation.navigate("Approval")}
-      />
-      <Button
-        title="Download Order"
-        onPress={() => navigation.navigate("ManageOrder")}
-      />
-      <Button
-        title="Pengajuan Uang Muka"
-        onPress={() => navigation.navigate("Pengajuan")}
-      />
-    </View>
-    
-      </ScrollView>
+    {
       
+      screen: "Approval",
+      image: require("../assets/images/approvaladmin.png"),
+    },
+    {
+      
+      screen: "ManageOrder",
+      image: require("../assets/images/downloadadmin.png"),
+    },
+    {
+      
+      screen: "ManagePengajuan",
+      image: require("../assets/images/approvalum.png"),
+    },
+    {
+      
+      screen: "Pengajuan",
+      image: require("../assets/images/downloadum.png"),
+    },
+  ];
+
+  return (
+    <ImageBackground
+      source={require("../assets/images/backgroundfix.png")}
+      style={styles.backgroundImage}
+    >
+      <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.text}></Text>
+        {buttons.map((button, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.button}
+            onPress={() => navigation.navigate(button.screen)}
+          >
+            <ImageBackground
+              source={button.image}
+              style={styles.buttonBackground}
+              imageStyle={styles.buttonImage}
+            >
+              <Text style={styles.buttonText}>{button.title}</Text>
+            </ImageBackground>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </ImageBackground>
   );
 };
+
+const styles = StyleSheet.create({
+  backgroundImage: {
+    width: 415,
+    height: 800,
+    justifyContent: "center",
+    alignItems: "left",
+  },
+  container: {
+    padding: 20,
+    alignItems: "center",
+  },
+  button: {
+    marginVertical: 25,
+    width: 360,
+    height: 98,
+  },
+  buttonBackground: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonImage: {
+    borderRadius: 10,
+    resizeMode: "cover",
+  },
+  text: {
+    marginTop: 20,
+    paddingBottom: 40,
+    fontSize: 24,
+    fontweight: "bold",
+    color: "white",
+  },
+  buttonText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    textAlign: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+});
 
 export default AdminScreen;
