@@ -178,16 +178,27 @@ const OrderScreen = () => {
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <Text style={styles.summaryTitle}>Order Summary</Text>
-          {orders.map((order, index) => (
-            <View key={index} style={styles.summaryItem}>
-              <Text>{`Item ${index + 1}:`}</Text>
-              <Text>{`Nama Barang: ${order.nama_barang}`}</Text>
-              <Text>{`Quantity: ${order.quantity}`}</Text>
-              <Text>{`Satuan: ${order.satuan}`}</Text>
-              <Text>{`Keterangan: ${order.keterangan}`}</Text>
+          <ScrollView style={styles.scrollView}>
+            <View style={styles.tableContainer}>
+              <View style={styles.tableHeader}>
+                <Text style={styles.headerText}>Item</Text>
+                <Text style={styles.headerText}>Nama Barang</Text>
+                <Text style={styles.headerText}>Quantity</Text>
+                <Text style={styles.headerText}>Satuan</Text>
+                <Text style={styles.headerText}>Keterangan</Text>
+              </View>
+              {orders.map((order, index) => (
+                <View key={index} style={styles.tableRow}>
+                  <Text style={styles.cellText}>{index + 1}</Text>
+                  <Text style={styles.cellText}>{order.nama_barang}</Text>
+                  <Text style={styles.cellText}>{order.quantity}</Text>
+                  <Text style={styles.cellText}>{order.satuan}</Text>
+                  <Text style={[styles.cellText, styles.wrapText]}>{order.keterangan}</Text>
+                </View>
+              ))}
             </View>
-          ))}
-          <Text>{`CC: ${cc}`}</Text>
+          </ScrollView>
+          <Text style={styles.ccText}>{`CC: ${cc}`}</Text>
           <View style={styles.summaryButtons}>
             <TouchableOpacity
               style={styles.button}
@@ -396,27 +407,67 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    width: "80%",
+    width: "90%",
     backgroundColor: "#fff",
-    padding: 20,
     borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 5,
+    padding: 20,
+    maxHeight: "80%", // Adjust the maximum height as per your need
   },
   summaryTitle: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 20,
+    textAlign: "center",
+    color: "#38B6FF",
   },
-  summaryItem: {
-    marginBottom: 15,
+  scrollView: {
+    maxHeight: "70%", // Adjust the maximum height as per your need
+  },
+  tableContainer: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+  tableHeader: {
+    flexDirection: "row",
+    backgroundColor: "#f0f0f0",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    paddingVertical: 10,
+  },
+  headerText: {
+    flex: 1,
+    textAlign: "center",
+    fontSize: 12,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  tableRow: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    paddingVertical: 10,
+  },
+  cellText: {
+    flex: 1,
+    textAlign: "center",
+    paddingHorizontal: 5,
+    color: "#333",
+  },
+  wrapText: {
+    flexWrap: "wrap",
+  },
+  ccText: {
+    marginTop: 20,
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
   },
   summaryButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 20,
   },
   button: {
     padding: 10,

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { View, Text, Button, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useRole } from "../context/RoleContext";
+import { ScrollView } from "react-native-gesture-handler";
 
 const AdminScreen = () => {
   const navigation = useNavigation();
@@ -42,6 +43,8 @@ const AdminScreen = () => {
   }
 
   return (
+    
+    <ScrollView>
     <View>
       {/* Your JSX here */}
       <Button
@@ -61,6 +64,9 @@ const AdminScreen = () => {
         onPress={() => navigation.navigate("Pengajuan")}
       />
     </View>
+    
+      </ScrollView>
+      
   );
 };
 
