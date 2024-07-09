@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   Image
 } from "react-native";
-import { collection, getDocs, doc, updateDoc, getDoc, query, where } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, query, where } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useRole } from "../context/RoleContext";
 import { useIsFocused } from "@react-navigation/native";
@@ -20,26 +20,26 @@ const ApprovalScreen = () => {
   const { role } = useRole();
   const databaseName = "data_pemesanan";
 
-  const division = role.split(' ').pop(); // Assuming the role ends with the division name
+  const division = role ? role.split(' ').pop() : "Guest"; // Assuming the role ends with the division name
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const q = query(collection(db, databaseName), where("division", "==", division));
+      const querySnapshot = await getDocs(q);
+      const ordersData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setOrders(ordersData);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      try {
-        const q = query(collection(db, databaseName), where("division", "==", division));
-        const querySnapshot = await getDocs(q);
-        const ordersData = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setOrders(ordersData);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (isFocused) {
       fetchOrders();
     }
@@ -50,9 +50,7 @@ const ApprovalScreen = () => {
     try {
       const orderRef = doc(db, databaseName, orderId);
       await updateDoc(orderRef, { status: "approved" });
-      // Refresh the data
-      const updatedOrdersData = await fetchOrders();
-      setOrders(updatedOrdersData);
+      await fetchOrders(); // Refresh the data
     } catch (error) {
       console.error("Error updating order:", error);
     } finally {
@@ -65,9 +63,7 @@ const ApprovalScreen = () => {
     try {
       const orderRef = doc(db, databaseName, orderId);
       await updateDoc(orderRef, { status: "rejected" });
-      // Refresh the data
-      const updatedOrdersData = await fetchOrders();
-      setOrders(updatedOrdersData);
+      await fetchOrders(); // Refresh the data
     } catch (error) {
       console.error("Error updating order:", error);
     } finally {
@@ -84,39 +80,39 @@ const ApprovalScreen = () => {
         orders.map((order) => (
           <View key={order.id} style={styles.orderContainer}>
             <Text style={styles.subHeader}>Order ID: {order.id}</Text>
-            {Object.values(order).map((item, index) =>
-              item.nama_barang && item.quantity && item.satuan && item.keterangan ? (
-                <View key={index}>
-                  <View style={styles.detailRow}>
-                    <Text style={styles.label}>Nama Barang:</Text>
-                    <Text style={styles.value}>{item.nama_barang}</Text>
+            <View style={styles.table}>
+              <View style={styles.tableRow}>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>Nama Barang</Text>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>Quantity</Text>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>Satuan</Text>
+                <Text style={styles.tableHeader}>Keterangan</Text>
+              </View>
+              {Object.values(order).map((item, index) =>
+                item.nama_barang && item.quantity && item.satuan && item.keterangan ? (
+                  <View key={index} style={styles.tableRow}>
+                    <Text style={[styles.tableCell, styles.columnBorder]}>{item.nama_barang}</Text>
+                    <Text style={[styles.tableCell, styles.columnBorder]}>{item.quantity}</Text>
+                    <Text style={[styles.tableCell, styles.columnBorder]}>{item.satuan}</Text>
+                    <Text style={styles.tableCell}>{item.keterangan}</Text>
                   </View>
-                  <View style={styles.detailRow}>
-                    <Text style={styles.label}>Quantity:</Text>
-                    <Text style={styles.value}>{item.quantity}</Text>
-                  </View>
-                  <View style={styles.detailRow}>
-                    <Text style={styles.label}>Satuan:</Text>
-                    <Text style={styles.value}>{item.satuan}</Text>
-                  </View>
-                  <View style={styles.detailRow}>
-                    <Text style={styles.label}>Keterangan:</Text>
-                    <Text style={styles.value}>{item.keterangan}</Text>
-                  </View>
-                </View>
-              ) : null
-            )}
-            <View style={styles.detailRow}>
-              <Text style={styles.label}>Date:</Text>
-              <Text style={styles.value}>{order.date}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.label}>Division:</Text>
-              <Text style={styles.value}>{order.division}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.label}>CC:</Text>
-              <Text style={styles.value}>{order.cc}</Text>
+                ) : null
+              )}
+              <View style={styles.tableRow}>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>Date</Text>
+                <Text style={styles.tableCell} colSpan={3}>{order.date}</Text>
+              </View>
+              <View style={styles.tableRow}>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>Division</Text>
+                <Text style={styles.tableCell} colSpan={3}>{order.division}</Text>
+              </View>
+              <View style={styles.tableRow}>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>CC</Text>
+                <Text style={styles.tableCell} colSpan={3}>{order.cc}</Text>
+              </View>
+              <View style={styles.tableRow}>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>Status</Text>
+                <Text style={styles.tableCell} colSpan={3}>{order.status}</Text>
+              </View>
             </View>
             <View style={styles.buttonContainer}>
               <TouchableOpacity
@@ -147,18 +143,7 @@ const ApprovalScreen = () => {
       ) : (
         <Text>No orders available.</Text>
       )}
-      <View style={{flex: 1}}>
-    <View style={{flex: 0.9}}>
-        <ScrollView>
-            <Text style={{marginBottom: 500}}>scrollable section</Text>
-        </ScrollView>
-    </View>
-    <View style={{flex: 0.1}}>
-        <Text>fixed footer</Text>
-    </View>
-</View>
     </ScrollView>
-    
   );
 };
 
@@ -174,36 +159,45 @@ const styles = StyleSheet.create({
   subHeader: {
     fontSize: 20,
     fontWeight: "bold",
+    color: "#38B6FF",
     marginBottom: 10,
   },
-  detailRow: {
+  table: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    overflow: "hidden",
+  },
+  tableRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  tableHeader: {
+    flex: 1,
+    padding: 10,
     fontWeight: "bold",
+    fontSize: 13.5,
+    backgroundColor: "#f0f0f0",
+    color: "#000000",
+    textAlign: "center",
+    borderRightWidth: 1,
+    borderColor: "#ccc",
   },
-  label: {
-    fontWeight: "bold",
-  },
-  value: {
-    fontFamily: "monospace",
-    color: "#333",
-  },
-  orderContainer: {
-    padding: 15,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    marginBottom: 20,
+  tableCell: {
+    flex: 1,
+    padding: 10,
+    textAlign: "center",
+    color: "#000000",
+    flexWrap: "wrap", // Allows the text to wrap
+    borderRightWidth: 1,
+    borderColor: "#ccc",
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 10,
+    marginTop: 20,
+    marginBottom: 45,
   },
   button: {
     flexDirection: "row",
@@ -225,6 +219,10 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  columnBorder: {
+    borderRightWidth: 1,
+    borderColor: "#ccc",
   },
 });
 

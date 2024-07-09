@@ -17,104 +17,115 @@ const HomeScreen = () => {
   const { role } = useRole();
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <ImageBackground
-          source={require("../assets/images/KSlenskep.png")}
-          style={styles.backgroundImage}
-          imageStyle={{ opacity: 0.9 }}
-        >
+    <View style={styles.screen}>
+      <ImageBackground
+        source={require("../assets/images/backgroundfix.png")}
+        style={styles.backgroundImage}
+        imageStyle={{ opacity: 1 }}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.container}>
           <Image
-            source={require("../assets/images/welcom.png")}
-            style={styles.welcome}
-          />
-          <Text style={styles.welcomeText}>{role}</Text>
-        </ImageBackground>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate("Order")}
-          >
-            <Image
-              source={require("../assets/images/orderlogofix.png")}
-              style={styles.buttonIcon}
-            />
-            <Text style={styles.buttonText}>Orders</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate("Admin")}
-          >
-            <Image
-              source={require("../assets/images/adminlogofix.png")}
-              style={styles.buttonIcon}
-            />
-            <Text style={styles.buttonText}>Admin</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={{ flex: 1, backgroundColor: '#38B6FF' }}>
-
-        <View style={{ flex: 10, backgroundColor: '#38B6FF',alignItems: 'left', justifyContent: 'center', marginTop:0, marginLeft:10, }}>
-          <Text style={{color:'white', fontSize:10}}> </Text>
-        </View>
-
-
-        <View style={{ flex: 1, backgroundColor: '#38B6FF', alignItems: 'Left', justifyContent: 'center', marginTop:10, marginLeft:10, marginBottom:10 }}>
-          <Text style={{color:'white', paddingBottom: 15, fontSize:10}}> Krakatau Information Technology </Text>
-        </View>
-
-</View>
-    </ScrollView>
+                  source={require("../assets/images/seldat.png")}
+                  style={styles.selamat}
+                />
+            <Text style={styles.welcomeText}>{role}</Text>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => navigation.navigate("Order")}
+              >
+                <Image
+                  source={require("../assets/images/orderlogofixfix.png")}
+                  style={styles.buttonIcon}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.button1}
+                onPress={() => navigation.navigate("Admin")}
+              >
+                <Image
+                  source={require("../assets/images/adminlogofixfix.png")}
+                  style={styles.buttonIcon}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.footerContainer}>
+            <View style={styles.footer}>
+              <Text style={styles.footerText}> </Text>
+            </View>
+            <View style={styles.footer}>
+              <Text style={styles.footerText}>Krakatau Information Technology®</Text>
+            </View>
+          </View>
+        </ScrollView>
+      </ImageBackground>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
   },
   backgroundImage: {
-    width: "100%",
-    height: 200,
+    width: 415,
+    height: 800,
     justifyContent: "center",
     alignItems: "left",
+  },
+  selamat: {
+    alignItems: "center",
+    width: 320,
+    height: 50,
+    padding: 15,
+    marginLeft: 20,
+    marginTop: 70,
+    marginVertical: 9,
+    resizeMode: "contain",
   },
   welcome: {
     width: "80%",
     height: "80%",
     marginLeft: 20,
-    marginBottom: 80,
+    marginBottom: 50,
     resizeMode: "contain",
   },
   welcomeText: {
-    fontSize: 30,
+    fontSize: 20,
     fontWeight: "bold",
     justifyContent: "left",
     color: "#FFFFFF",
     //backgroundColor: "rgba(255, 255, 255, 0.7)",
     paddingVertical: 0,
-    marginTop: -140,
+    marginTop: 2,
     marginLeft: 20,
     paddingHorizontal: 5,
     borderRadius: 10,
   },
   buttonContainer: {
     flex: 0,
-    justifyContent: "center",
     alignItems: "center",
   },
   button: {
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.7)",
     padding: 15,
     borderRadius: 8,
-    marginVertical: 30,
-    width: "70%",
+    marginTop: 40,
+   // width: "70%",
+  },
+  button1: {
+    alignItems: "center",
+    padding: 15,
+    borderRadius: 8,
+    marginTop: 20,
+    marginBottom: 100,
+   // width: "70%",
   },
   buttonIcon: {
-    width: 160,
-    height: 160,
+    width: 302,
+    height: 200,
     marginRight: 10,
   },
   buttonText: {
@@ -122,6 +133,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginTop: 10,
+  },
+  footerText: {
+    color: "#aeaeae",
+    fontSize: 14,
+    marginTop: 10,
+    alignSelf:"center",
+    marginBottom: 30,
   },
 });
 
