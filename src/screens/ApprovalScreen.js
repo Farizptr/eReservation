@@ -20,8 +20,7 @@ const ApprovalScreen = () => {
   const { role } = useRole();
   const databaseName = "data_pemesanan";
 
-  const division = role.split(' ').pop(); // Assuming the role ends with the division name
-
+  const division = role ? role.split(' ').pop() : 'Guest'; // Replace 'defaultDivision' with an appropriate default or handle the case as needed
   useEffect(() => {
     const fetchOrders = async () => {
       setLoading(true);
