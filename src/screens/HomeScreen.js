@@ -134,8 +134,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 10,
   },
+  footer: {
+    width: 302,
+    height: 130,
+    marginLeft: 52,
+    marginBottom: 12,
+  },
   footerText: {
-    color: "#aeaeae",
+    color: "#d4d4d4",
     fontSize: 14,
     marginTop: 10,
     alignSelf:"center",
