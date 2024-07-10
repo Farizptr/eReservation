@@ -6,26 +6,49 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
-  Image
+  Image,
+  Alert
 } from "react-native";
-import { collection, getDocs, doc, updateDoc, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../../firebase";
 import { useRole } from "../context/RoleContext";
-import { useIsFocused } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
 const ApprovalScreen = () => {
-  const isFocused = useIsFocused();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const { role } = useRole();
   const databaseName = "data_pemesanan";
+  const navigation = useNavigation();
 
-  const division = role ? role.split(' ').pop() : "Guest"; // Assuming the role ends with the division name
+  const allowedRoles = [
+    "Head of Procurement",
+    "Head of Finance",
+    "Head of SAP",
+    "Head of SPI",
+    "Head of Sales",
+    "Head of Infrastructure",
+    "Head of Digital_Transformation",
+    "Head of Business_Development",
+  ];
+
+  const division = role ? role.split(" ").pop() : "Guest"; // Assuming the role ends with the division name
 
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const q = query(collection(db, databaseName), where("division", "==", division));
+      const q = query(
+        collection(db, databaseName),
+        where("division", "==", division),
+        where("status", "==", "Pending")
+      );
       const querySnapshot = await getDocs(q);
       const ordersData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -40,10 +63,24 @@ const ApprovalScreen = () => {
   };
 
   useEffect(() => {
-    if (isFocused) {
-      fetchOrders();
-    }
-  }, [isFocused, role, division]);
+    const unsubscribe = navigation.addListener("focus", () => {
+      if (!allowedRoles.includes(role)) {
+        Alert.alert(
+          "Access Denied",
+          "You are not authorized to access this page",
+          [{ text: "OK", onPress: () => navigation.navigate("Admin") }]
+        );
+      } else {
+        fetchOrders();
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, role, allowedRoles, fetchOrders]);
+
+  if (!allowedRoles.includes(role)) {
+    return null;
+  }
 
   const handleApprove = async (orderId) => {
     setLoading(true);
@@ -82,36 +119,67 @@ const ApprovalScreen = () => {
             <Text style={styles.subHeader}>Order ID: {order.id}</Text>
             <View style={styles.table}>
               <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>Nama Barang</Text>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>Quantity</Text>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>Satuan</Text>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>
+                  Nama Barang
+                </Text>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>
+                  Quantity
+                </Text>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>
+                  Satuan
+                </Text>
                 <Text style={styles.tableHeader}>Keterangan</Text>
               </View>
               {Object.values(order).map((item, index) =>
-                item.nama_barang && item.quantity && item.satuan && item.keterangan ? (
+                item.nama_barang &&
+                item.quantity &&
+                item.satuan &&
+                item.keterangan ? (
                   <View key={index} style={styles.tableRow}>
-                    <Text style={[styles.tableCell, styles.columnBorder]}>{item.nama_barang}</Text>
-                    <Text style={[styles.tableCell, styles.columnBorder]}>{item.quantity}</Text>
-                    <Text style={[styles.tableCell, styles.columnBorder]}>{item.satuan}</Text>
+                    <Text style={[styles.tableCell, styles.columnBorder]}>
+                      {item.nama_barang}
+                    </Text>
+                    <Text style={[styles.tableCell, styles.columnBorder]}>
+                      {item.quantity}
+                    </Text>
+                    <Text style={[styles.tableCell, styles.columnBorder]}>
+                      {item.satuan}
+                    </Text>
                     <Text style={styles.tableCell}>{item.keterangan}</Text>
                   </View>
                 ) : null
               )}
               <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>Date</Text>
-                <Text style={styles.tableCell} colSpan={3}>{order.date}</Text>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>
+                  Date
+                </Text>
+                <Text style={styles.tableCell} colSpan={3}>
+                  {order.date}
+                </Text>
               </View>
               <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>Division</Text>
-                <Text style={styles.tableCell} colSpan={3}>{order.division}</Text>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>
+                  Division
+                </Text>
+                <Text style={styles.tableCell} colSpan={3}>
+                  {order.division}
+                </Text>
               </View>
               <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>CC</Text>
-                <Text style={styles.tableCell} colSpan={3}>{order.cc}</Text>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>
+                  CC
+                </Text>
+                <Text style={styles.tableCell} colSpan={3}>
+                  {order.cc}
+                </Text>
               </View>
               <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>Status</Text>
-                <Text style={styles.tableCell} colSpan={3}>{order.status}</Text>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>
+                  Status
+                </Text>
+                <Text style={styles.tableCell} colSpan={3}>
+                  {order.status}
+                </Text>
               </View>
             </View>
             <View style={styles.buttonContainer}>
@@ -121,7 +189,7 @@ const ApprovalScreen = () => {
                 disabled={order.status === "approved"}
               >
                 <Image
-                  source={require('../assets/images/check.png')}
+                  source={require("../assets/images/check.png")}
                   style={styles.buttonIcon}
                 />
                 <Text style={styles.buttonText}>Approve</Text>
@@ -132,7 +200,7 @@ const ApprovalScreen = () => {
                 disabled={order.status === "rejected"}
               >
                 <Image
-                  source={require('../assets/images/cross.png')}
+                  source={require("../assets/images/cross.png")}
                   style={styles.buttonIcon}
                 />
                 <Text style={styles.buttonText}>Reject</Text>
