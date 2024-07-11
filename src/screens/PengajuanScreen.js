@@ -56,7 +56,7 @@ const PengajuanScreen = () => {
     },
     {
       
-      screen: "Ga refer",
+      screen: "AddPengajuan",
       image: require("../assets/images/downloadadmin.png"),
     },
    

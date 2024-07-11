@@ -41,6 +41,7 @@ const OrderScreen = () => {
         const lastOrderDoc = await getDoc(doc(db, "meta", "lastOrderId"));
         if (lastOrderDoc.exists()) {
           setLastOrderId(lastOrderDoc.data().lastOrderId);
+          console.log(lastOrderDoc.data().lastOrderId);
         } else {
           setLastOrderId("ORD0000000000");
         }
