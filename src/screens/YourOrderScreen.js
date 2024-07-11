@@ -8,7 +8,7 @@ import {
   Modal,
   ActivityIndicator,
 } from "react-native";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useRole } from "../context/RoleContext";
 import { useIsFocused } from "@react-navigation/native";
@@ -21,12 +21,15 @@ const YourOrderScreen = () => {
   const [loading, setLoading] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const division = role;
+
 
   useEffect(() => {
     const getData = async () => {
       setLoading(true);
       try {
-        const querySnapshot = await getDocs(collection(db, databaseName));
+        const q = query(collection(db, databaseName), where("division", "==", division));
+        const querySnapshot = await getDocs(q);
         const ordersData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),

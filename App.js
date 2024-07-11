@@ -21,6 +21,7 @@ import ProcurementAdminScreen from "./src/screens/ProcurementAdminScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import AdminScreen from "./src/screens/AdminScreen";
 import EditPengajuanScreen from "./src/screens/EditPengajuanScreen";
+import ReferScreen from "./src/screens/ReferScreen";
 import withRoleCheck from "./src/utils/withRoleCheck";
 
 
@@ -60,6 +61,7 @@ export default function App() {
             name="ProcurementAdmin"
             component={ProcurementAdminScreen}/>
           <Drawer.Screen name = "EditPengajuan" component = {EditPengajuanScreen}/>
+          <Drawer.Screen name = "Refer" component = {ReferScreen}/>
         </Drawer.Navigator>
       </NavigationContainer>
     </RoleProvider>

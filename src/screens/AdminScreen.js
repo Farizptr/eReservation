@@ -26,6 +26,8 @@ const AdminScreen = () => {
     "Head of Infrastructure",
     "Head of Digital_Transformation",
     "Head of Business_Development",
+    "Procurement",
+    "Finance",
   ];
 
   useEffect(() => {
