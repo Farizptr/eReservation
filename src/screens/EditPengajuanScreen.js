@@ -17,8 +17,7 @@ import { useRole } from "../context/RoleContext";
 
 const OrderScreen = () => {
   const route = useRoute();
-  const navigation = useNavigation();
-  const { order, division, cc, date } = route.params; // get the passed fields
+  const { order, cc, date } = route.params; // get the passed fields
   const [keperluan, setKeperluan] = useState(order.keperluan || "");
   const { role } = useRole();
   const [orders, setOrders] = useState([{ uraian: "", satuan_harga: "", jumlah_barang: "" }]);
@@ -32,8 +31,7 @@ const OrderScreen = () => {
       try {
         const lastOrderDoc = await getDoc(doc(db, "meta", "lastPengajuanId"));
         if (lastOrderDoc.exists()) {
-          setLastOrderId(lastOrderDoc.data().lastOrderId);
-          console.log(lastOrderDoc.data().lastOrderId);
+          setLastOrderId(lastOrderDoc.data().lastPengajuanId);
         } else {
           setLastOrderId("PGJ0000000000");
         }
@@ -119,7 +117,7 @@ const OrderScreen = () => {
       });
 
       const metaDoc = doc(db, "meta", "lastPengajuanId");
-      await setDoc(metaDoc, { lastOrderId: newOrderId });
+      await setDoc(metaDoc, { lastPengajuanId: newOrderId });
 
       setLoading(false);
       setShowSummary(true);

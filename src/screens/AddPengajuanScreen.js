@@ -31,9 +31,7 @@ const AddPengajuanScreen = () => {
       try {
         const lastOrderDoc = await getDoc(doc(db, "meta", "lastPengajuanId"));
         if (lastOrderDoc.exists()) {
-          setLastOrderId(lastOrderDoc.data().lastOrderId);
-          console.log(lastOrderDoc.data().lastOrderId);
-          console.log(lastOrderDoc.data())
+          setLastOrderId(lastOrderDoc.data().lastPengajuanId);
         } else {
           setLastOrderId("PGJ0000000000");
         }
