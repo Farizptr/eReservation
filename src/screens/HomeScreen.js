@@ -36,7 +36,7 @@ const HomeScreen = () => {
                 onPress={() => navigation.navigate("Order")}
               >
                 <Image
-                  source={require("../assets/images/orderlogofixfix.png")}
+                  source={require("../assets/images/orderlogofixfixfix.png")}
                   style={styles.buttonIcon}
                 />
               </TouchableOpacity>

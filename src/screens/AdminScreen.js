@@ -53,12 +53,12 @@ const AdminScreen = () => {
     {
       
       screen: "Approval",
-      image: require("../assets/images/approvaladmin.png"),
+      image: require("../assets/images/aprovaladminfixfix.png"),
     },
     {
       
       screen: "ManageOrder",
-      image: require("../assets/images/downloadadmin.png"),
+      image: require("../assets/images/downloadadminfixfix.png"),
     },
     {
       
