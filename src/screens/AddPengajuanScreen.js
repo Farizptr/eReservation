@@ -15,10 +15,10 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useRole } from "../context/RoleContext";
 
-const OrderScreen = () => {
-  const route = useRoute();
-  const { order, cc, date } = route.params; // get the passed fields
-  const [keperluan, setKeperluan] = useState(order.keperluan || "");
+const AddPengajuanScreen = () => {
+  const navigation = useNavigation();
+  const [keperluan, setKeperluan] = useState("");
+  const [cc, setCc] = useState("");
   const { role } = useRole();
   const [orders, setOrders] = useState([{ uraian: "", satuan_harga: "", jumlah_barang: "" }]);
   const [loading, setLoading] = useState(false);
@@ -67,7 +67,7 @@ const OrderScreen = () => {
 
   const validateOrders = () => {
     for (let order of orders) {
-      if (!order.uraian || !order.satuan_harga || !keperluan || !order.jumlah_barang) {
+      if (!order.uraian || !order.satuan_harga || !keperluan || !cc || !order.jumlah_barang) {
         return false;
       }
     }
@@ -93,9 +93,12 @@ const OrderScreen = () => {
     const newOrderId = generateNewOrderId(lastOrderId);
     let modifiedOrder = {};
     let databaseName = "data_pengajuan";
-    const director_status = "Pending"
-    const procurement_status = "Pending"
 
+    const status = "Pending";
+    const director_status = "Pending";
+    const procurement_status = "Pending";
+    const currentDate = new Date();
+    const formattedDate = formatDate(currentDate);
 
     orders.forEach((order, index) => {
       modifiedOrder[index] = { ...order };
@@ -104,10 +107,10 @@ const OrderScreen = () => {
     let finalOrder = {
       ...modifiedOrder,
       keperluan,
-      procurement_status,
-      director_status,
       cc,
-      date,
+      director_status,
+      procurement_status,
+      date: formattedDate,
     };
 
     try {
@@ -121,8 +124,8 @@ const OrderScreen = () => {
 
       setLoading(false);
       setShowSummary(true);
+      setLastOrderId(newOrderId);
       Alert.alert("Success", "Order placed successfully!");
-
     } catch (error) {
       setLoading(false);
       console.error("Error placing order:", error);
@@ -135,10 +138,27 @@ const OrderScreen = () => {
   };
 
   const formatDate = (date) => {
+    const day = date.getDate();
+    const monthNames = [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
+    ];
+    const monthIndex = date.getMonth();
     const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-    return `${year}-${month}-${day}`;
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const seconds = date.getSeconds().toString().padStart(2, "0");
+    return `${day} ${monthNames[monthIndex]} ${year} ${hours}:${minutes}:${seconds}`;
   };
 
   return (
@@ -150,7 +170,9 @@ const OrderScreen = () => {
             <View key={index} style={styles.orderSummary}>
               <Text style={styles.summaryText}>Order {index + 1}:</Text>
               <Text style={styles.summaryText}>Uraian: {order.uraian}</Text>
-              <Text style={styles.summaryText}>Satuan Harga: {order.satuan_harga}</Text>
+              <Text style={styles.summaryText}>
+                Satuan Harga: {order.satuan_harga}
+              </Text>
             </View>
           ))}
           <TouchableOpacity
@@ -171,6 +193,16 @@ const OrderScreen = () => {
           onBlur={() => setFocusedInput(null)}
         />
       </View>
+      <View style={styles.row}>
+        <Text style={styles.label}>CC:</Text>
+        <TextInput
+          style={styles.input}
+          value={cc}
+          onChangeText={setCc}
+          onFocus={() => setFocusedInput("cc")}
+          onBlur={() => setFocusedInput(null)}
+        />
+      </View>
       {orders.map((order, index) => (
         <View key={index} style={styles.orderContainer}>
           <View style={styles.row}>
@@ -184,7 +216,7 @@ const OrderScreen = () => {
             />
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>jumlah_barang:</Text>
+            <Text style={styles.label}>jumlah_barang</Text>
             <TextInput
               style={styles.input}
               value={order.jumlah_barang}
@@ -198,11 +230,14 @@ const OrderScreen = () => {
             <TextInput
               style={styles.input}
               value={order.satuan_harga}
-              onChangeText={(text) => handleOrderChange(text, index, "satuan_harga")}
+              onChangeText={(text) =>
+                handleOrderChange(text, index, "satuan_harga")
+              }
               onFocus={() => setFocusedInput(`satuan_harga_${index}`)}
               onBlur={() => setFocusedInput(null)}
             />
           </View>
+          
           <TouchableOpacity
             style={styles.deleteButton}
             onPress={() => handleDeleteOrder(index)}
@@ -315,4 +350,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OrderScreen;
+export default AddPengajuanScreen;

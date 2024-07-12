@@ -67,7 +67,7 @@ const AdminScreen = () => {
     },
     {
       
-      screen: "Pengajuan",
+      screen: "CetakUM",
       image: require("../assets/images/downloadum.png"),
     },
   ];
