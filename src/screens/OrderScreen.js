@@ -184,7 +184,7 @@ const OrderScreen = () => {
               <View style={styles.tableHeader}>
                 <Text style={styles.headerText}>Item</Text>
                 <Text style={styles.headerText}>Nama Barang</Text>
-                <Text style={styles.headerText}>Quantity</Text>
+                <Text style={styles.headerText}>Kuantitas</Text>
                 <Text style={styles.headerText}>Satuan</Text>
                 <Text style={styles.headerText}>Keterangan</Text>
               </View>
@@ -238,7 +238,7 @@ const OrderScreen = () => {
             onFocus={() => setFocusedInput(`nama_barang_${index}`)}
             onBlur={() => setFocusedInput(null)}
           />
-          <Text style={styles.label}>Quantity</Text>
+          <Text style={styles.label}>Kuantitas</Text>
           <TextInput
             style={[
               styles.input,
@@ -283,7 +283,7 @@ const OrderScreen = () => {
             style={styles.deleteButton}
             onPress={() => handleDeleteOrder(index)}
           >
-            <Text style={styles.deleteButtonText}>Delete</Text>
+            <Text style={styles.deleteButtonText}>Hapus</Text>
           </TouchableOpacity>
         </View>
       ))}
@@ -298,7 +298,7 @@ const OrderScreen = () => {
       />
       <TouchableOpacity style={styles.addButton} onPress={handleAddOrder}>
         <Image source={addIcon} style={styles.icon} />
-        <Text style={styles.addButtonText}>Add another order</Text>
+        <Text style={styles.addButtonText}>Tambah pesanan lain</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.reviewButton}
@@ -310,7 +310,7 @@ const OrderScreen = () => {
         ) : (
           <>
             <Image source={reviewIcon} style={styles.icon} />
-            <Text style={styles.reviewButtonText}>Review & Confirm Order</Text>
+            <Text style={styles.reviewButtonText}>Review & Konfirmasi Pesanan</Text>
           </>
         )}
       </TouchableOpacity>
@@ -500,9 +500,9 @@ export default function App() {
         tabBarIcon: ({ color, size }) => {
           let iconSource;
 
-          if (route.name === "Order") {
+          if (route.name === "Pesanan") {
             iconSource = orderIcon;
-          } else if (route.name === "Your Orders") {
+          } else if (route.name === "Pesanan Anda") {
             iconSource = listIcon;
           }
 
@@ -519,8 +519,8 @@ export default function App() {
         inactiveTintColor: "gray",
       }}
     >
-      <Tab.Screen name="Order" component={OrderScreen} />
-      <Tab.Screen name="Your Orders" component={YourOrderScreen} />
+      <Tab.Screen name="Pesanan" component={OrderScreen} />
+      <Tab.Screen name="Pesanan Anda" component={YourOrderScreen} />
     </Tab.Navigator>
   );
 }
