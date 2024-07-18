@@ -82,30 +82,60 @@ const ApprovalScreen = () => {
     return null;
   }
 
-  const handleApprove = async (orderId) => {
-    setLoading(true);
-    try {
-      const orderRef = doc(db, databaseName, orderId);
-      await updateDoc(orderRef, { status: "approved" });
-      await fetchOrders(); // Refresh the data
-    } catch (error) {
-      console.error("Error updating order:", error);
-    } finally {
-      setLoading(false);
-    }
+  const handleApprove = (orderId) => {
+    Alert.alert(
+      "Konfirmasi Persetujuan",
+      "Apakah anda yakin untuk menyetujui pengajuan ini?",
+      [
+        {
+          text: "Tidak",
+          style: "cancel",
+        },
+        {
+          text: "Ya",
+          onPress: async () => {
+            setLoading(true);
+            try {
+              const orderRef = doc(db, databaseName, orderId);
+              await updateDoc(orderRef, { status: "approved" });
+              await fetchOrders(); // Refresh the data
+            } catch (error) {
+              console.error("Error updating order:", error);
+            } finally {
+              setLoading(false);
+            }
+          },
+        },
+      ]
+    );
   };
 
-  const handleReject = async (orderId) => {
-    setLoading(true);
-    try {
-      const orderRef = doc(db, databaseName, orderId);
-      await updateDoc(orderRef, { status: "rejected" });
-      await fetchOrders(); // Refresh the data
-    } catch (error) {
-      console.error("Error updating order:", error);
-    } finally {
-      setLoading(false);
-    }
+  const handleReject = (orderId) => {
+    Alert.alert(
+      "Konfirmasi Penolakan",
+      "Apakah anda yakin untuk menolak pengajuan ini?",
+      [
+        {
+          text: "Tidak",
+          style: "cancel",
+        },
+        {
+          text: "Ya",
+          onPress: async () => {
+            setLoading(true);
+            try {
+              const orderRef = doc(db, databaseName, orderId);
+              await updateDoc(orderRef, { status: "rejected" });
+              await fetchOrders(); // Refresh the data
+            } catch (error) {
+              console.error("Error updating order:", error);
+            } finally {
+              setLoading(false);
+            }
+          },
+        },
+      ]
+    );
   };
 
   return (
