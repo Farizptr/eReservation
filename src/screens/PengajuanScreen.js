@@ -52,12 +52,12 @@ const PengajuanScreen = () => {
     {
       
       screen: "Refer",
-      image: require("../assets/images/approvaladmin.png"),
+      image: require("../assets/images/refer.png"),
     },
     {
       
       screen: "AddPengajuan",
-      image: require("../assets/images/downloadadmin.png"),
+      image: require("../assets/images/addpengajuan.png"),
     },
    
   ];
@@ -68,14 +68,14 @@ const PengajuanScreen = () => {
       style={styles.backgroundImage}
     >
       <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.text}></Text>
+      <Text style={styles.text}>Admin Only</Text>
         {buttons.map((button, index) => (
           <TouchableOpacity
             key={index}
             style={styles.button}
             onPress={() => navigation.navigate(button.screen)}
           >
-            <Text>{button.screen}</Text>
+            
             <ImageBackground
               source={button.image}
               style={styles.buttonBackground}
@@ -102,7 +102,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    marginVertical: 25,
+    marginVertical: 250,
+    marginTop: 30,
+    marginBottom: 20,
     width: 360,
     height: 98,
   },
@@ -116,11 +118,11 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   text: {
-    marginTop: 20,
+    marginTop: 100,
     paddingBottom: 40,
     fontSize: 24,
     fontweight: "bold",
-    color: "white",
+    color: "yellow",
   },
   buttonText: {
     fontSize: 20,

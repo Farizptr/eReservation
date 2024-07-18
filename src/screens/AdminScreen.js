@@ -62,6 +62,11 @@ const AdminScreen = () => {
     },
     {
       
+      screen: "Pengajuan",
+      image: require("../assets/images/tombolpengajuan.png"),
+    },
+    {
+      
       screen: "ManagePengajuan",
       image: require("../assets/images/approvalum.png"),
     },
