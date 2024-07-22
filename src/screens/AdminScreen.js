@@ -18,6 +18,7 @@ const AdminScreen = () => {
   const [hasAccess, setHasAccess] = useState(true);
 
   const allowedRoles = [
+    "Director",
     "Head of Procurement",
     "Head of Finance",
     "Head of SAP",
