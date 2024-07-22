@@ -98,7 +98,10 @@ const LoginScreen = () => {
       />
 
       <View style={styles.overlay}>
-        <Text style={styles.title1}>E-Procurement</Text>
+      <Image
+        source={require("../assets/images/ereserv.png")}
+        style={styles.title1}
+      />
         <Text style={styles.title}>Please login to access</Text>
         <TextInput
           style={styles.input}
@@ -150,7 +153,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 116,
     resizeMode: "contain",
-    marginBottom: 10,
+    marginBottom: 40,
   },
   title: {
     fontSize: 14,
@@ -159,11 +162,10 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   title1: {
-    fontSize: 30,
-    fontWeight: "bold",
+    width: 290,
+    height: 25,
     marginBottom: 0,
-    color: "#38B6FF",
-    marginTop: 25,
+    marginTop: 39,
   },
   input: {
     width: "80%",
@@ -185,12 +187,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   loginButton: {
-    backgroundColor: "#007bff",
-    padding: 10,
+    backgroundColor: "#2985DC",
+    padding: 15,
     borderRadius: 5,
     width: "80%",
     alignItems: "center",
-    marginVertical: 10,
+    marginVertical: 25,
+    marginTop: 25,
   },
   loginButtonText: {
     color: "#ffffff",
