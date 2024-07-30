@@ -17,17 +17,7 @@ const PengajuanScreen = () => {
   const { role } = useRole();
   const [hasAccess, setHasAccess] = useState(true);
 
-  const allowedRoles = [
-    "Head of Procurement",
-    "Head of Finance",
-    "Head of SAP",
-    "Head of SPI",
-    "Head of Sales",
-    "Head of Infrastructure",
-    "Head of Digital_Transformation",
-    "Head of Business_Development",
-    "Procurement"
-  ];
+  const allowedRoles = ["Head of Procurement", "Procurement"];
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -48,19 +38,16 @@ const PengajuanScreen = () => {
   }
 
   const buttons = [
-    
     {
-      
       screen: "Refer",
       image: require("../assets/images/refer.png"),
     },
     {
-      
       screen: "AddPengajuan",
       image: require("../assets/images/addpengajuan.png"),
     },
-   
   ];
+
 
   return (
     <ImageBackground
@@ -68,14 +55,13 @@ const PengajuanScreen = () => {
       style={styles.backgroundImage}
     >
       <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.text}>Admin Only</Text>
+        <Text style={styles.text}>Admin Only</Text>
         {buttons.map((button, index) => (
           <TouchableOpacity
             key={index}
             style={styles.button}
             onPress={() => navigation.navigate(button.screen)}
           >
-            
             <ImageBackground
               source={button.image}
               style={styles.buttonBackground}

@@ -11,13 +11,13 @@ import {
   Modal,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useRole } from "../context/RoleContext";
 
 const OrderScreen = () => {
   const route = useRoute();
-  const { order, cc, date } = route.params; // get the passed fields
+  const { order, orderId, cc, date } = route.params; // get the passed fields
   const [keperluan, setKeperluan] = useState(order.keperluan || "");
   const { role } = useRole();
   const [orders, setOrders] = useState([{ uraian: "", satuan_harga: "", jumlah_barang: "" }]);
@@ -97,6 +97,7 @@ const OrderScreen = () => {
     const procurement_status = "Pending"
 
 
+
     orders.forEach((order, index) => {
       modifiedOrder[index] = { ...order };
     });
@@ -115,6 +116,9 @@ const OrderScreen = () => {
       await setDoc(orderDoc, {
         ...finalOrder,
       });
+
+      const orderRef = doc(db, "data_pemesanan", orderId);
+      await updateDoc(orderRef, { refer: true });
 
       const metaDoc = doc(db, "meta", "lastPengajuanId");
       await setDoc(metaDoc, { lastPengajuanId: newOrderId });
@@ -173,6 +177,9 @@ const OrderScreen = () => {
       </View>
       {orders.map((order, index) => (
         <View key={index} style={styles.orderContainer}>
+          <Text>
+            {orderId}
+          </Text>
           <View style={styles.row}>
             <Text style={styles.label}>Uraian:</Text>
             <TextInput
@@ -190,6 +197,7 @@ const OrderScreen = () => {
               value={order.jumlah_barang}
               onChangeText={(text) => handleOrderChange(text, index, "jumlah_barang")}
               onFocus={() => setFocusedInput(`jumlah_barang_${index}`)}
+              keyboardType="numeric"
               onBlur={() => setFocusedInput(null)}
             />
           </View>
@@ -200,6 +208,7 @@ const OrderScreen = () => {
               value={order.satuan_harga}
               onChangeText={(text) => handleOrderChange(text, index, "satuan_harga")}
               onFocus={() => setFocusedInput(`satuan_harga_${index}`)}
+              keyboardType="numeric"
               onBlur={() => setFocusedInput(null)}
             />
           </View>
