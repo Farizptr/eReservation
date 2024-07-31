@@ -111,6 +111,28 @@ const ManagePengajuan = () => {
     }
   };
 
+  const confirmApprove = (orderId) => {
+    Alert.alert(
+      "Konfirmasi Persetujuan",
+      "Apakah anda yakin untuk menyetujui pengajuan ini?",
+      [
+        { text: "Tidak", style: "cancel" },
+        { text: "Ya", onPress: () => handleApprove(orderId) },
+      ]
+    );
+  };
+
+  const confirmReject = (orderId) => {
+    Alert.alert(
+      "Konfirmasi Penolakan",
+      "Apakah anda yakin untuk menolak pengajuan ini?",
+      [
+        { text: "Tidak", style: "cancel" },
+        { text: "Ya", onPress: () => handleReject(orderId) },
+      ]
+    );
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>{role}</Text>
@@ -174,7 +196,7 @@ const ManagePengajuan = () => {
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={[styles.button, styles.approveButton]}
-                onPress={() => handleApprove(order.id)}
+                onPress={() => confirmApprove(order.id)}
                 disabled={order.status === "approved"}
               >
                 <Image
@@ -185,7 +207,7 @@ const ManagePengajuan = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.button, styles.rejectButton]}
-                onPress={() => handleReject(order.id)}
+                onPress={() => confirmReject(order.id)}
                 disabled={order.status === "rejected"}
               >
                 <Image
@@ -198,7 +220,7 @@ const ManagePengajuan = () => {
           </View>
         ))
       ) : (
-        <Text>No orders availablae.</Text>
+        <Text>No orders available.</Text>
       )}
     </ScrollView>
   );
