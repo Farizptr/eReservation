@@ -10,7 +10,7 @@ import {
   Text,
   Modal,
 } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useRole } from "../context/RoleContext";
@@ -96,8 +96,6 @@ const OrderScreen = () => {
     const director_status = "Pending"
     const procurement_status = "Pending"
 
-
-
     orders.forEach((order, index) => {
       modifiedOrder[index] = { ...order };
     });
@@ -165,6 +163,9 @@ const OrderScreen = () => {
           </TouchableOpacity>
         </View>
       </Modal>
+
+      <Text style={styles.pageTitle}>{orderId}</Text>
+
       <View style={styles.row}>
         <Text style={styles.label}>Keperluan:</Text>
         <TextInput
@@ -175,11 +176,10 @@ const OrderScreen = () => {
           onBlur={() => setFocusedInput(null)}
         />
       </View>
+      
       {orders.map((order, index) => (
-        <View key={index} style={styles.orderContainer}>
-          <Text>
-            {orderId}
-          </Text>
+        <View key={index}>
+          <Text style={styles.orderTitle}>Order {index + 1}</Text>
           <View style={styles.row}>
             <Text style={styles.label}>Uraian:</Text>
             <TextInput
@@ -191,7 +191,7 @@ const OrderScreen = () => {
             />
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>jumlah_barang:</Text>
+            <Text style={styles.label}>Jumlah Barang:</Text>
             <TextInput
               style={styles.input}
               value={order.jumlah_barang}
@@ -242,6 +242,12 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
   },
+  pageTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "left",
+  },
   row: {
     flexDirection: "row",
     alignItems: "center",
@@ -250,6 +256,7 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: "bold",
     marginRight: 10,
+    width: 120, // Adjusted width for better alignment
   },
   input: {
     flex: 1,
@@ -258,14 +265,17 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 5,
   },
-  orderContainer: {
+  orderTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
     marginBottom: 10,
+    textAlign: "left",
   },
   deleteButton: {
     backgroundColor: "#ff6347",
     padding: 8,
     borderRadius: 5,
-    marginTop: 5,
+    marginTop: 20,
     alignItems: "center",
   },
   deleteButtonText: {
@@ -276,7 +286,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 20,
   },
   addButtonText: {
     color: "#fff",
