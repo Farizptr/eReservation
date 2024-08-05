@@ -74,7 +74,7 @@ const ManagePengajuan = () => {
     });
 
     return unsubscribe;
-  }, [navigation, role, allowedRoles, fetchOrders]);
+  }, [navigation, role, allowedRoles]);
 
   if (!allowedRoles.includes(role)) {
     return null;
@@ -102,7 +102,7 @@ const ManagePengajuan = () => {
     setLoading(true);
     try {
       const orderRef = doc(db, databaseName, orderId);
-      await updateDoc(orderRef, { status: "rejected" });
+      await updateDoc(orderRef, { procurement_status: "Rejected" });
       await fetchOrders(); // Refresh the data
     } catch (error) {
       console.error("Error updating order:", error);
@@ -125,49 +125,48 @@ const ManagePengajuan = () => {
                 <Text style={[styles.tableHeader, styles.columnBorder]}>
                   Nama Barang
                 </Text>
+                <Text style={styles.tableCell}>
+                  {order.uraian || "N/A"}
+                </Text>
+              </View>
+              <View style={styles.tableRow}>
                 <Text style={[styles.tableHeader, styles.columnBorder]}>
                   Quantity
                 </Text>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>
-                  Satuan
+                <Text style={styles.tableCell}>
+                  {order.jumlah_barang || "N/A"}
                 </Text>
-                <Text style={styles.tableHeader}>Keterangan</Text>
               </View>
-              {Object.values(order).map((item, index) =>
-                item && item.satuan_harga && item.uraian ? (
-                  <View key={index} style={styles.tableRow}>
-                    <Text style={[styles.tableCell, styles.columnBorder]}>
-                      {item.satuan_harga}
-                    </Text>
-                    <Text style={[styles.tableCell, styles.columnBorder]}>
-                      {item.uraian}
-                    </Text>
-                  </View>
-                ) : null
-              )}
+              <View style={styles.tableRow}>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>
+                  Keterangan
+                </Text>
+                <Text style={styles.tableCell}>
+                  {order.satuan_harga || "N/A"}
+                </Text>
+              </View>
               <View style={styles.tableRow}>
                 <Text style={[styles.tableHeader, styles.columnBorder]}>
                   Date
                 </Text>
-                <Text style={styles.tableCell} colSpan={3}>
-                  {order.date}
+                <Text style={styles.tableCell}>
+                  {order.date || "N/A"}
                 </Text>
               </View>
-
               <View style={styles.tableRow}>
                 <Text style={[styles.tableHeader, styles.columnBorder]}>
                   CC
                 </Text>
-                <Text style={styles.tableCell} colSpan={3}>
-                  {order.cc}
+                <Text style={styles.tableCell}>
+                  {order.cc || "N/A"}
                 </Text>
               </View>
               <View style={styles.tableRow}>
                 <Text style={[styles.tableHeader, styles.columnBorder]}>
                   Status
                 </Text>
-                <Text style={styles.tableCell} colSpan={3}>
-                  {order.procurement_status}
+                <Text style={styles.tableCell}>
+                  {order.procurement_status || "N/A"}
                 </Text>
               </View>
             </View>
@@ -175,7 +174,7 @@ const ManagePengajuan = () => {
               <TouchableOpacity
                 style={[styles.button, styles.approveButton]}
                 onPress={() => handleApprove(order.id)}
-                disabled={order.status === "approved"}
+                disabled={order.procurement_status === "Approved"}
               >
                 <Image
                   source={require("../assets/images/check.png")}
@@ -186,7 +185,7 @@ const ManagePengajuan = () => {
               <TouchableOpacity
                 style={[styles.button, styles.rejectButton]}
                 onPress={() => handleReject(order.id)}
-                disabled={order.status === "rejected"}
+                disabled={order.procurement_status === "Rejected"}
               >
                 <Image
                   source={require("../assets/images/cross.png")}
@@ -198,7 +197,7 @@ const ManagePengajuan = () => {
           </View>
         ))
       ) : (
-        <Text>No orders availablae.</Text>
+        <Text>No orders available.</Text>
       )}
     </ScrollView>
   );
