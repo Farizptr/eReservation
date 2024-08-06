@@ -24,6 +24,10 @@ import EditPengajuanScreen from "./src/screens/EditPengajuanScreen";
 import ReferScreen from "./src/screens/ReferScreen";
 import AddPengajuanScreen from "./src/screens/AddPengajuanScreen";
 import CetakUMScreen from "./src/screens/CetakUMScreen";
+import ListUangMuka from "./src/screens/ListUangMuka";
+import BuatPertanggungJawabanScreen from "./src/screens/BuatPertanggungJawabanScreen";
+import ManagePertanggungJawaban from "./src/screens/ManagePertanggungJawabanScreen";
+import CetakTanggungan from "./src/screens/CetakTanggunganScreen";
 import withRoleCheck from "./src/utils/withRoleCheck";
 
 
@@ -66,6 +70,10 @@ export default function App() {
           <Drawer.Screen name = "Refer" component = {ReferScreen}/>
           <Drawer.Screen name = "AddPengajuan" component = {AddPengajuanScreen}/>
           <Drawer.Screen name = "CetakUM" component = {CetakUMScreen}/>
+          <Drawer.Screen name = "ListUangMuka" component = {ListUangMuka}/>
+          <Drawer.Screen name = "BuatPertanggungJawaban" component = {BuatPertanggungJawabanScreen}/>
+          <Drawer.Screen name = "ManagePertanggungJawaban" component = {ManagePertanggungJawaban}/>
+          <Drawer.Screen name = "CetakTanggungan" component = {CetakTanggungan}/>
         </Drawer.Navigator>
       </NavigationContainer>
     </RoleProvider>

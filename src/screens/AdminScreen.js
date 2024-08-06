@@ -78,12 +78,12 @@ const AdminScreen = () => {
     },
     {
       
-      screen: "CetakUM",
+      screen: "ListUangMuka",
       image: require("../assets/images/pj.png"),
     },
     {
       
-      screen: "CetakUM",
+      screen: "BuatPertanggungJawaban",
       image: require("../assets/images/approvalpj.png"),
     },
     {
