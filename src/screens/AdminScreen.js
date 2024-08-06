@@ -76,6 +76,21 @@ const AdminScreen = () => {
       screen: "CetakUM",
       image: require("../assets/images/downloadum.png"),
     },
+    {
+      
+      screen: "CetakUM",
+      image: require("../assets/images/pj.png"),
+    },
+    {
+      
+      screen: "CetakUM",
+      image: require("../assets/images/approvalpj.png"),
+    },
+    {
+      
+      screen: "CetakUM",
+      image: require("../assets/images/downloadpj.png"),
+    },
   ];
 
   return (
@@ -107,8 +122,6 @@ const AdminScreen = () => {
 
 const styles = StyleSheet.create({
   backgroundImage: {
-    width: 415,
-    height: 800,
     justifyContent: "center",
     alignItems: "left",
   },
@@ -120,6 +133,7 @@ const styles = StyleSheet.create({
     marginVertical: 25,
     width: 360,
     height: 98,
+    alighItems: true,
   },
   buttonBackground: {
     flex: 1,
