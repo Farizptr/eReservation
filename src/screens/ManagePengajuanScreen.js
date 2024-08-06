@@ -111,6 +111,28 @@ const ManagePengajuan = () => {
     }
   };
 
+  const confirmApprove = (orderId) => {
+    Alert.alert(
+      "Konfirmasi Persetujuan",
+      "Apakah anda yakin untuk menyetujui pengajuan ini?",
+      [
+        { text: "Tidak", style: "cancel" },
+        { text: "Ya", onPress: () => handleApprove(orderId) },
+      ]
+    );
+  };
+
+  const confirmReject = (orderId) => {
+    Alert.alert(
+      "Konfirmasi Penolakan",
+      "Apakah anda yakin untuk menolak pengajuan ini?",
+      [
+        { text: "Tidak", style: "cancel" },
+        { text: "Ya", onPress: () => handleReject(orderId) },
+      ]
+    );
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>{role}</Text>
@@ -173,8 +195,10 @@ const ManagePengajuan = () => {
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={[styles.button, styles.approveButton]}
-                onPress={() => handleApprove(order.id)}
-                disabled={order.procurement_status === "Approved"}
+
+                onPress={() => confirmApprove(order.id)}
+                disabled={order.status === "approved"}
+
               >
                 <Image
                   source={require("../assets/images/check.png")}
@@ -184,8 +208,11 @@ const ManagePengajuan = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.button, styles.rejectButton]}
-                onPress={() => handleReject(order.id)}
-                disabled={order.procurement_status === "Rejected"}
+
+            
+
+                onPress={() => confirmReject(order.id)}
+                disabled={order.status === "rejected"}
               >
                 <Image
                   source={require("../assets/images/cross.png")}
