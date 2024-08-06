@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {
   View,
   Text,
@@ -7,14 +7,35 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useRole } from "../context/RoleContext";
 import { ScrollView } from "react-native-gesture-handler";
 
+
+
 const HomeScreen = () => {
   const navigation = useNavigation();
   const { role } = useRole();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      if (role === null) {
+        Alert.alert(
+          "Access Denied",
+          "You are not authorized to access this page",
+          [{ text: "OK", onPress: () => navigation.navigate("Login") }]
+        );
+      }
+    });
+  
+    return unsubscribe;
+  }, [navigation, role]);
+  
+  if (role === null) {
+    return null;
+  }
 
   return (
     <View style={styles.screen}>
