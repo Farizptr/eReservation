@@ -52,7 +52,7 @@ const AdminScreen = () => {
     { screen: "ManagePengajuan", image: require("../assets/images/approvalum.png") },
     { screen: "CetakUM", image: require("../assets/images/downloadum.png") },
     { screen: "ListUangMuka", image: require("../assets/images/pj.png") },
-    { screen: "BuatPertanggungJawaban", image: require("../assets/images/approvalpj.png") },
+    { screen: "ManagePertanggungJawaban", image: require("../assets/images/approvalpj.png") },
     { screen: "CetakUM", image: require("../assets/images/downloadpj.png") },
   ];
 
