@@ -15,7 +15,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useRole } from "../context/RoleContext";
 
-const OrderScreen = () => {
+const EditPengajuan = () => {
   const route = useRoute();
   const { order, cc, date } = route.params; // get the passed fields
   const [keperluan, setKeperluan] = useState(order.keperluan || "");
@@ -96,7 +96,6 @@ const OrderScreen = () => {
     const director_status = "Pending"
     const procurement_status = "Pending"
 
-
     orders.forEach((order, index) => {
       modifiedOrder[index] = { ...order };
     });
@@ -143,24 +142,30 @@ const OrderScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Modal visible={showSummary} animationType="slide">
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Order Summary</Text>
-          {orders.map((order, index) => (
-            <View key={index} style={styles.orderSummary}>
-              <Text style={styles.summaryText}>Order {index + 1}:</Text>
-              <Text style={styles.summaryText}>Uraian: {order.uraian}</Text>
-              <Text style={styles.summaryText}>Satuan Harga: {order.satuan_harga}</Text>
-            </View>
-          ))}
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={handleModalClose}
-          >
-            <Text style={styles.closeButtonText}>Close</Text>
-          </TouchableOpacity>
+      {/* Display Order Details Table */}
+      <View style={styles.orderDetailsContainer}>
+        <Text style={styles.header}>Order Details</Text>
+        <View style={styles.table}>
+          <View style={styles.tableRow}>
+            <Text style={styles.tableHeader}>Nama Barang</Text>
+            <Text style={styles.tableHeader}>Quantity</Text>
+            <Text style={styles.tableHeader}>Satuan</Text>
+            <Text style={styles.tableHeader}>Keterangan</Text>
+          </View>
+          {Object.values(order).map((item, index) =>
+            item.nama_barang && item.quantity && item.satuan && item.keterangan ? (
+              <View key={index} style={styles.tableRow}>
+                <Text style={styles.tableCell}>{item.nama_barang}</Text>
+                <Text style={styles.tableCell}>{item.quantity}</Text>
+                <Text style={styles.tableCell}>{item.satuan}</Text>
+                <Text style={styles.tableCell}>{item.keterangan}</Text>
+              </View>
+            ) : null
+          )}
         </View>
-      </Modal>
+      </View>
+
+      {/* Existing Input Form */}
       <View style={styles.row}>
         <Text style={styles.label}>Keperluan:</Text>
         <TextInput
@@ -184,7 +189,7 @@ const OrderScreen = () => {
             />
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>jumlah_barang:</Text>
+            <Text style={styles.label}>Jumlah Barang:</Text>
             <TextInput
               style={styles.input}
               value={order.jumlah_barang}
@@ -207,12 +212,12 @@ const OrderScreen = () => {
             style={styles.deleteButton}
             onPress={() => handleDeleteOrder(index)}
           >
-            <Text style={styles.deleteButtonText}>Delete Order</Text>
+            <Text style={styles.deleteButtonText}>Hapus Item</Text>
           </TouchableOpacity>
         </View>
       ))}
       <TouchableOpacity style={styles.addButton} onPress={handleAddOrder}>
-        <Text style={styles.addButtonText}>Add Order</Text>
+        <Text style={styles.addButtonText}>Tambahkan Item</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.placeOrderButton}
@@ -222,7 +227,7 @@ const OrderScreen = () => {
         {loading ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (
-          <Text style={styles.placeOrderButtonText}>Place Order</Text>
+          <Text style={styles.placeOrderButtonText}>Submit Pengajuan</Text>
         )}
       </TouchableOpacity>
     </ScrollView>
@@ -256,7 +261,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ff6347",
     padding: 8,
     borderRadius: 5,
-    marginTop: 5,
+    marginTop: 20,
     alignItems: "center",
   },
   deleteButtonText: {
@@ -267,52 +272,55 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
-    marginTop: 10,
-  },
-  addButtonText: {
+    marginBottom: 7,
+},
+addButtonText: {
     color: "#fff",
     fontWeight: "bold",
-  },
-  placeOrderButton: {
+},
+placeOrderButton: {
     backgroundColor: "#4CAF50",
     padding: 15,
     borderRadius: 5,
     alignItems: "center",
-    marginTop: 20,
-  },
-  placeOrderButtonText: {
+    marginTop: 15,
+},
+placeOrderButtonText: {
     color: "#fff",
     fontWeight: "bold",
-  },
-  modalContent: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-    backgroundColor: "#fff",
-  },
-  modalTitle: {
+},
+orderDetailsContainer: {
+    marginBottom: 20,
+},
+header: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 20,
-  },
-  orderSummary: {
     marginBottom: 10,
-  },
-  summaryText: {
-    fontSize: 18,
-  },
-  closeButton: {
-    backgroundColor: "#38B6FF",
-    padding: 10,
+},
+table: {
+    borderWidth: 1,
+    borderColor: "#ccc",
     borderRadius: 5,
-    alignItems: "center",
-    marginTop: 20,
-  },
-  closeButtonText: {
-    color: "#fff",
+    overflow: "hidden",
+},
+tableRow: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+},
+tableHeader: {
+    flex: 1,
+    padding: 10,
     fontWeight: "bold",
-  },
+    backgroundColor: "#f0f0f0",
+    textAlign: "center",
+},
+tableCell: {
+    flex: 1,
+    padding: 10,
+    textAlign: "center",
+},
 });
 
-export default OrderScreen;
+export default EditPengajuan;
+

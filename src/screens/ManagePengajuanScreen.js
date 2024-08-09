@@ -51,6 +51,8 @@ const ManagePengajuan = () => {
         id: doc.id,
         ...doc.data(),
       }));
+
+      console.log("Orders fetched:", ordersData);
       setOrders(ordersData);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -69,7 +71,6 @@ const ManagePengajuan = () => {
         );
       } else {
         fetchOrders();
-        console.log(orders);
       }
     });
 
@@ -90,7 +91,7 @@ const ManagePengajuan = () => {
         await updateDoc(orderRef, { director_status: "Approved" });
       }
 
-      await fetchOrders(); // Refresh the data
+      await fetchOrders(); // Refresh data
     } catch (error) {
       console.error("Error updating order:", error);
     } finally {
@@ -103,12 +104,21 @@ const ManagePengajuan = () => {
     try {
       const orderRef = doc(db, databaseName, orderId);
       await updateDoc(orderRef, { procurement_status: "Rejected" });
-      await fetchOrders(); // Refresh the data
+      await fetchOrders(); // Refresh data
     } catch (error) {
       console.error("Error updating order:", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const getStatusStyle = (status) => {
+    if (status === "Pending") {
+      return styles.statusPending;
+    } else if (status === "Approved") {
+      return styles.statusApproved;
+    }
+    return styles.statusDefault;
   };
 
   return (
@@ -121,51 +131,47 @@ const ManagePengajuan = () => {
           <View key={order.id} style={styles.orderContainer}>
             <Text style={styles.subHeader}>Order ID: {order.id}</Text>
             <View style={styles.table}>
+              {Object.keys(order).filter(key => !isNaN(key)).length > 0 ? (
+                Object.keys(order).filter(key => !isNaN(key)).map((key, index) => (
+                  <React.Fragment key={index}>
+                    <View style={styles.tableRow}>
+                      <Text style={[styles.tableHeader, styles.columnBorder]}>Uraian</Text>
+                      <Text style={styles.tableCell}>{order[key].uraian}</Text>
+                    </View>
+                    <View style={styles.tableRow}>
+                      <Text style={[styles.tableHeader, styles.columnBorder]}>Jumlah Barang</Text>
+                      <Text style={styles.tableCell}>{order[key].jumlah_barang}</Text>
+                    </View>
+                    <View style={styles.tableRow}>
+                      <Text style={[styles.tableHeader, styles.columnBorder]}>Harga Satuan</Text>
+                      <Text style={styles.tableCell}>{order[key].satuan_harga}</Text>
+                    </View>
+                  </React.Fragment>
+                ))
+              ) : (
+                <Text style={styles.tableCell}>Data tidak tersedia</Text>
+              )}
               <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>
-                  Nama Barang
-                </Text>
-                <Text style={styles.tableCell}>
-                  {order.uraian || "N/A"}
+                <Text style={[styles.tableHeader, styles.columnBorder]}>Keperluan</Text>
+                <Text style={styles.tableCell}>{order.keperluan || "N/A"}</Text>
+              </View>
+              <View style={styles.tableRow}>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>Date</Text>
+                <Text style={styles.tableCell}>{order.date || "N/A"}</Text>
+              </View>
+              <View style={styles.tableRow}>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>CC</Text>
+                <Text style={styles.tableCell}>{order.cc || "N/A"}</Text>
+              </View>
+              <View style={styles.tableRow}>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>Director Status</Text>
+                <Text style={[styles.tableCell, getStatusStyle(order.director_status)]}>
+                  {order.director_status || "N/A"}
                 </Text>
               </View>
               <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>
-                  Quantity
-                </Text>
-                <Text style={styles.tableCell}>
-                  {order.jumlah_barang || "N/A"}
-                </Text>
-              </View>
-              <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>
-                  Keterangan
-                </Text>
-                <Text style={styles.tableCell}>
-                  {order.satuan_harga || "N/A"}
-                </Text>
-              </View>
-              <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>
-                  Date
-                </Text>
-                <Text style={styles.tableCell}>
-                  {order.date || "N/A"}
-                </Text>
-              </View>
-              <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>
-                  CC
-                </Text>
-                <Text style={styles.tableCell}>
-                  {order.cc || "N/A"}
-                </Text>
-              </View>
-              <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>
-                  Status
-                </Text>
-                <Text style={styles.tableCell}>
+                <Text style={[styles.tableHeader, styles.columnBorder]}>Procurement Status</Text>
+                <Text style={[styles.tableCell, getStatusStyle(order.procurement_status)]}>
                   {order.procurement_status || "N/A"}
                 </Text>
               </View>
@@ -248,6 +254,17 @@ const styles = StyleSheet.create({
     flexWrap: "wrap", // Allows the text to wrap
     borderRightWidth: 1,
     borderColor: "#ccc",
+  },
+  statusPending: {
+    color: "orange",
+    fontWeight: "bold",
+  },
+  statusApproved: {
+    color: "green",
+    fontWeight: "bold",
+  },
+  statusDefault: {
+    color: "#000",
   },
   buttonContainer: {
     flexDirection: "row",
