@@ -23,7 +23,7 @@ const ReferScreen = () => {
     const getData = async () => {
       setLoading(true);
       try {
-        const ordersData = await fetchData(databaseName, "status", "approved");
+        const ordersData = await fetchData(databaseName, "refer", false);
         setData(ordersData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -54,7 +54,10 @@ const ReferScreen = () => {
                 <Text style={styles.tableHeader}>Keterangan</Text>
               </View>
               {Object.values(order).map((item, index) =>
-                item.nama_barang && item.quantity && item.satuan && item.keterangan ? (
+                item.nama_barang &&
+                item.quantity &&
+                item.satuan &&
+                item.keterangan ? (
                   <View key={index} style={styles.tableRow}>
                     <Text style={styles.tableCell}>{item.nama_barang}</Text>
                     <Text style={styles.tableCell}>{item.quantity}</Text>
@@ -65,19 +68,27 @@ const ReferScreen = () => {
               )}
               <View style={styles.tableRow}>
                 <Text style={styles.tableHeader}>Date</Text>
-                <Text style={styles.tableCell} colSpan={3}>{order.date}</Text>
+                <Text style={styles.tableCell} colSpan={3}>
+                  {order.date}
+                </Text>
               </View>
               <View style={styles.tableRow}>
                 <Text style={styles.tableHeader}>Division</Text>
-                <Text style={styles.tableCell} colSpan={3}>{order.division}</Text>
+                <Text style={styles.tableCell} colSpan={3}>
+                  {order.division}
+                </Text>
               </View>
               <View style={styles.tableRow}>
                 <Text style={styles.tableHeader}>CC</Text>
-                <Text style={styles.tableCell} colSpan={3}>{order.cc}</Text>
+                <Text style={styles.tableCell} colSpan={3}>
+                  {order.cc}
+                </Text>
               </View>
               <View style={styles.tableRow}>
                 <Text style={styles.tableHeader}>Status</Text>
-                <Text style={styles.tableCell} colSpan={3}>{order.status}</Text>
+                <Text style={styles.tableCell} colSpan={3}>
+                  {order.status}
+                </Text>
               </View>
             </View>
             <View style={styles.buttonContainer}>
@@ -86,6 +97,7 @@ const ReferScreen = () => {
                 onPress={() =>
                   navigation.navigate("EditPengajuan", {
                     order,
+                    orderId: order.id,
                     division: order.division,
                     cc: order.cc,
                     date: order.date,

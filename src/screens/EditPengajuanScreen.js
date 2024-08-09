@@ -10,14 +10,14 @@ import {
   Text,
   Modal,
 } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useRoute } from "@react-navigation/native";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useRole } from "../context/RoleContext";
 
 const EditPengajuan = () => {
   const route = useRoute();
-  const { order, cc, date } = route.params; // get the passed fields
+  const { order, orderId, cc, date } = route.params; // get the passed fields
   const [keperluan, setKeperluan] = useState(order.keperluan || "");
   const { role } = useRole();
   const [orders, setOrders] = useState([{ uraian: "", satuan_harga: "", jumlah_barang: "" }]);
@@ -115,6 +115,9 @@ const EditPengajuan = () => {
         ...finalOrder,
       });
 
+      const orderRef = doc(db, "data_pemesanan", orderId);
+      await updateDoc(orderRef, { refer: true });
+
       const metaDoc = doc(db, "meta", "lastPengajuanId");
       await setDoc(metaDoc, { lastPengajuanId: newOrderId });
 
@@ -176,8 +179,10 @@ const EditPengajuan = () => {
           onBlur={() => setFocusedInput(null)}
         />
       </View>
+      
       {orders.map((order, index) => (
-        <View key={index} style={styles.orderContainer}>
+        <View key={index}>
+          <Text style={styles.orderTitle}>Order {index + 1}</Text>
           <View style={styles.row}>
             <Text style={styles.label}>Uraian:</Text>
             <TextInput
@@ -190,11 +195,13 @@ const EditPengajuan = () => {
           </View>
           <View style={styles.row}>
             <Text style={styles.label}>Jumlah Barang:</Text>
+            <Text style={styles.label}>Jumlah Barang:</Text>
             <TextInput
               style={styles.input}
               value={order.jumlah_barang}
               onChangeText={(text) => handleOrderChange(text, index, "jumlah_barang")}
               onFocus={() => setFocusedInput(`jumlah_barang_${index}`)}
+              keyboardType="numeric"
               onBlur={() => setFocusedInput(null)}
             />
           </View>
@@ -205,6 +212,7 @@ const EditPengajuan = () => {
               value={order.satuan_harga}
               onChangeText={(text) => handleOrderChange(text, index, "satuan_harga")}
               onFocus={() => setFocusedInput(`satuan_harga_${index}`)}
+              keyboardType="numeric"
               onBlur={() => setFocusedInput(null)}
             />
           </View>
@@ -238,6 +246,12 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
   },
+  pageTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "left",
+  },
   row: {
     flexDirection: "row",
     alignItems: "center",
@@ -246,6 +260,7 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: "bold",
     marginRight: 10,
+    width: 120, // Adjusted width for better alignment
   },
   input: {
     flex: 1,
@@ -254,13 +269,17 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 5,
   },
-  orderContainer: {
+  orderTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
     marginBottom: 10,
+    textAlign: "left",
   },
   deleteButton: {
     backgroundColor: "#ff6347",
     padding: 8,
     borderRadius: 5,
+    marginTop: 20,
     marginTop: 20,
     alignItems: "center",
   },

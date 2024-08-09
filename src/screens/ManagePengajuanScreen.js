@@ -179,8 +179,10 @@ const ManagePengajuan = () => {
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={[styles.button, styles.approveButton]}
-                onPress={() => handleApprove(order.id)}
-                disabled={order.procurement_status === "Approved"}
+
+                onPress={() => confirmApprove(order.id)}
+                disabled={order.status === "approved"}
+
               >
                 <Image
                   source={require("../assets/images/check.png")}
@@ -190,8 +192,11 @@ const ManagePengajuan = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.button, styles.rejectButton]}
-                onPress={() => handleReject(order.id)}
-                disabled={order.procurement_status === "Rejected"}
+
+            
+
+                onPress={() => confirmReject(order.id)}
+                disabled={order.status === "rejected"}
               >
                 <Image
                   source={require("../assets/images/cross.png")}

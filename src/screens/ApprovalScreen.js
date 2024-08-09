@@ -83,6 +83,7 @@ const ApprovalScreen = () => {
   }
 
   const handleApprove = (orderId) => {
+    const refer = false;
     Alert.alert(
       "Konfirmasi Persetujuan",
       "Apakah anda yakin untuk menyetujui pengajuan ini?",
@@ -97,7 +98,7 @@ const ApprovalScreen = () => {
             setLoading(true);
             try {
               const orderRef = doc(db, databaseName, orderId);
-              await updateDoc(orderRef, { status: "approved" });
+              await updateDoc(orderRef, { status: "approved", refer });
               await fetchOrders(); // Refresh the data
             } catch (error) {
               console.error("Error updating order:", error);

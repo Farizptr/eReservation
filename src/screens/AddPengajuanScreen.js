@@ -10,7 +10,7 @@ import {
   Text,
   Modal,
 } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useRole } from "../context/RoleContext";
@@ -183,6 +183,7 @@ const AddPengajuanScreen = () => {
           </TouchableOpacity>
         </View>
       </Modal>
+      <Text style={styles.pageTitle}>Pengajuan Order</Text>
       <View style={styles.row}>
         <Text style={styles.label}>Keperluan:</Text>
         <TextInput
@@ -205,7 +206,8 @@ const AddPengajuanScreen = () => {
       </View>
       {orders.map((order, index) => (
         <View key={index} style={styles.orderContainer}>
-          <View style={styles.row}>
+          <Text style={styles.orderTitle}>Order {index + 1}</Text>
+          <View style={styles.inputRow}>
             <Text style={styles.label}>Uraian:</Text>
             <TextInput
               style={styles.input}
@@ -215,29 +217,28 @@ const AddPengajuanScreen = () => {
               onBlur={() => setFocusedInput(null)}
             />
           </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>jumlah_barang</Text>
+          <View style={styles.inputRow}>
+            <Text style={styles.label}>Jumlah Barang:</Text>
             <TextInput
               style={styles.input}
               value={order.jumlah_barang}
               onChangeText={(text) => handleOrderChange(text, index, "jumlah_barang")}
+              keyboardType="numeric"
               onFocus={() => setFocusedInput(`jumlah_barang_${index}`)}
               onBlur={() => setFocusedInput(null)}
             />
           </View>
-          <View style={styles.row}>
+          <View style={styles.inputRow}>
             <Text style={styles.label}>Satuan Harga:</Text>
             <TextInput
               style={styles.input}
               value={order.satuan_harga}
-              onChangeText={(text) =>
-                handleOrderChange(text, index, "satuan_harga")
-              }
+              onChangeText={(text) => handleOrderChange(text, index, "satuan_harga")}
+              keyboardType="numeric"
               onFocus={() => setFocusedInput(`satuan_harga_${index}`)}
               onBlur={() => setFocusedInput(null)}
             />
           </View>
-          
           <TouchableOpacity
             style={styles.deleteButton}
             onPress={() => handleDeleteOrder(index)}
@@ -246,20 +247,22 @@ const AddPengajuanScreen = () => {
           </TouchableOpacity>
         </View>
       ))}
-      <TouchableOpacity style={styles.addButton} onPress={handleAddOrder}>
-        <Text style={styles.addButtonText}>Add Order</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.placeOrderButton}
-        onPress={handlePlaceOrder}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator size="small" color="#fff" />
-        ) : (
-          <Text style={styles.placeOrderButtonText}>Place Order</Text>
-        )}
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.addButton} onPress={handleAddOrder}>
+          <Text style={styles.addButtonText}>Add Order</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.placeOrderButton}
+          onPress={handlePlaceOrder}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={styles.placeOrderButtonText}>Place Order</Text>
+          )}
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };
@@ -267,6 +270,11 @@ const AddPengajuanScreen = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+  },
+  pageTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
   row: {
     flexDirection: "row",
@@ -276,6 +284,7 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: "bold",
     marginRight: 10,
+    width: 120, // Fixed width for label alignment
   },
   input: {
     flex: 1,
@@ -284,15 +293,25 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 5,
   },
-  orderContainer: {
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 10,
+  },
+  orderTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginVertical: 10,
+  },
+  orderContainer: {
+    marginBottom: 20,
   },
   deleteButton: {
     backgroundColor: "#ff6347",
     padding: 8,
     borderRadius: 5,
-    marginTop: 5,
     alignItems: "center",
+    marginTop: 10,
   },
   deleteButtonText: {
     color: "#fff",
@@ -302,7 +321,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
-    marginTop: 10,
   },
   addButtonText: {
     color: "#fff",
@@ -313,11 +331,15 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     alignItems: "center",
-    marginTop: 20,
   },
   placeOrderButtonText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
   },
   modalContent: {
     flex: 1,
