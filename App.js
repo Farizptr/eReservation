@@ -16,6 +16,18 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import ProcurementScreen from "./src/screens/ProcurementScreen";
 import DirectorScreen from "./src/screens/DirectorScreen";
 import DokumenPengajuanScreen from "./src/screens/DokumenPengajuanScreen";
+import ApprovalScreen from "./src/screens/ApprovalScreen";
+import ProcurementAdminScreen from "./src/screens/ProcurementAdminScreen";
+import HomeScreen from "./src/screens/HomeScreen";
+import AdminScreen from "./src/screens/AdminScreen";
+import EditPengajuanScreen from "./src/screens/EditPengajuanScreen";
+import ReferScreen from "./src/screens/ReferScreen";
+import AddPengajuanScreen from "./src/screens/AddPengajuanScreen";
+import CetakUMScreen from "./src/screens/CetakUMScreen";
+import ListUangMuka from "./src/screens/ListUangMuka";
+import BuatPertanggungJawabanScreen from "./src/screens/BuatPertanggungJawabanScreen";
+import ManagePertanggungJawaban from "./src/screens/ManagePertanggungJawabanScreen";
+import CetakTanggungan from "./src/screens/CetakTanggunganScreen";
 import withRoleCheck from "./src/utils/withRoleCheck";
 
 
@@ -30,6 +42,8 @@ export default function App() {
         >
           <Drawer.Screen name="Login" component={LoginScreen} />
           <Drawer.Screen name="Order" component={OrderScreen} />
+          <Drawer.Screen name="Admin" component={AdminScreen} />
+          <Drawer.Screen name="Home" component={HomeScreen} />
           <Drawer.Screen name="ManageOrder" component={ManageOrderScreen} />
           <Drawer.Screen name="Pemesanan" component={PemesananScreen} />
           <Drawer.Screen name="Pengajuan" component={PengajuanScreen} />
@@ -48,6 +62,18 @@ export default function App() {
             component={DokumenPengajuanScreen}
           />
           <Drawer.Screen name="YourOrder" component={yourOrderScreen} />
+          <Drawer.Screen name="Approval" component={ApprovalScreen} />
+          <Drawer.Screen
+            name="ProcurementAdmin"
+            component={ProcurementAdminScreen}/>
+          <Drawer.Screen name = "EditPengajuan" component = {EditPengajuanScreen}/>
+          <Drawer.Screen name = "Refer" component = {ReferScreen}/>
+          <Drawer.Screen name = "AddPengajuan" component = {AddPengajuanScreen}/>
+          <Drawer.Screen name = "CetakUM" component = {CetakUMScreen}/>
+          <Drawer.Screen name = "ListUangMuka" component = {ListUangMuka}/>
+          <Drawer.Screen name = "BuatPertanggungJawaban" component = {BuatPertanggungJawabanScreen}/>
+          <Drawer.Screen name = "ManagePertanggungJawaban" component = {ManagePertanggungJawaban}/>
+          <Drawer.Screen name = "CetakTanggungan" component = {CetakTanggungan}/>
         </Drawer.Navigator>
       </NavigationContainer>
     </RoleProvider>

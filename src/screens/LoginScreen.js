@@ -1,5 +1,4 @@
-// src/screens/LoginScreen.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,19 +8,41 @@ import {
   ImageBackground,
   Image,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
-import { TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import useAuth from "../hooks/useAuth";
 import useRoleNavigation from "../hooks/useRoleNavigation";
+import { useRole } from "../context/RoleContext";
 
 const LoginScreen = () => {
   // Initialize state variables
+  const navigation = useNavigation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const { login, loading } = useAuth();
+  const { role } = useRole();
   const navigateBasedOnRole = useRoleNavigation();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      if (role !== null) {
+        Alert.alert(
+          "Already Logged in",
+          "Udah login",
+          [{ text: "OK", onPress: () => navigation.navigate("Home") }]
+        );
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, role]);
+
+  if (role !== null) {
+    return null;
+  }
 
   // Function to validate form fields
   const validateForm = () => {
@@ -47,13 +68,13 @@ const LoginScreen = () => {
   // Function to handle login
   const handleLogin = async () => {
     if (!validateForm()) return;
-    
+
     try {
       const userRole = await login(username, password);
       navigateBasedOnRole(userRole);
     } catch (error) {
       console.log("Error during login:", error);
-    } finally {   
+    } finally {
       setUsername("");
       setPassword("");
     }
@@ -71,7 +92,10 @@ const LoginScreen = () => {
       />
 
       <View style={styles.overlay}>
-        <Text style={styles.title1}>E-Procurement</Text>
+        <Image
+          source={require("../assets/images/ereserv.png")}
+          style={styles.title1}
+        />
         <Text style={styles.title}>Please login to access</Text>
         <TextInput
           style={styles.input}
@@ -123,7 +147,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 116,
     resizeMode: "contain",
-    marginBottom: 10,
+    marginBottom: 40,
   },
   title: {
     fontSize: 14,
@@ -132,11 +156,10 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   title1: {
-    fontSize: 30,
-    fontWeight: "bold",
+    width: 290,
+    height: 25,
     marginBottom: 0,
-    color: "#38B6FF",
-    marginTop: 25,
+    marginTop: 39,
   },
   input: {
     width: "80%",
@@ -158,12 +181,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   loginButton: {
-    backgroundColor: "#007bff",
-    padding: 10,
+    backgroundColor: "#2985DC",
+    padding: 15,
     borderRadius: 5,
     width: "80%",
     alignItems: "center",
-    marginVertical: 10,
+    marginVertical: 25,
+    marginTop: 25,
   },
   loginButtonText: {
     color: "#ffffff",

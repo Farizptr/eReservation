@@ -17,17 +17,10 @@ const ProcurementScreen = () => {
         onPress={() => navigation.navigate("Order")}
       />
       <Button
-        title="Go to Dokumen Pemesanan"
-        onPress={() => navigation.navigate("Pemesanan")}
+        title="Go to Admin Screen"
+        onPress={() => navigation.navigate("ProcurementAdmin")}
       />
-      <Button
-        title="Go to Pengajuan Uang Muka"
-        onPress={() => navigation.navigate("Pengajuan")}
-      />
-      <Button
-        title="Go to Pertanggung Jawab Uang Muka"
-        onPress={() => navigation.navigate("Pertanggungan")}
-      />
+      
       {role === "Head of Procurement" && (
         <Button
           title="Go to Manage Pengajuan"
