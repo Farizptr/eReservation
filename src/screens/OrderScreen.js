@@ -114,6 +114,7 @@ const OrderScreen = () => {
     let databaseName = "data_pemesanan";
 
     const status = "Pending";
+    const refer = false
     const division = role;
     const currentDate = new Date();
     const formattedDate = formatDate(currentDate);
@@ -128,6 +129,7 @@ const OrderScreen = () => {
       date: formattedDate,
       status,
       division,
+      refer,
     };
 
     try {
