@@ -23,7 +23,19 @@ const CetakTanggungan = () => {
   const { role } = useRole();
   const databaseName = "data_pertanggungjawaban";
   const [loading, setLoading] = useState(false);
-  const allowedRoles = ["Finance"];
+  const allowedRoles = [
+    "Director",
+    "Head of Procurement",
+    "Head of Finance",
+    "Head of SAP",
+    "Head of SPI",
+    "Head of Sales",
+    "Head of Infrastructure",
+    "Head of Digital_Transformation",
+    "Head of Business_Development",
+    "Procurement",
+    "Finance",
+  ];
 
   const fetchOrders = async () => {
     setLoading(true);

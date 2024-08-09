@@ -69,12 +69,11 @@ const ManagePertanggungJawaban = () => {
         );
       } else {
         fetchOrders();
-        console.log(orders);
       }
     });
 
     return unsubscribe;
-  }, [navigation, role, allowedRoles, fetchOrders]);
+  }, [navigation, role]);
 
   if (!allowedRoles.includes(role)) {
     return null;
@@ -89,7 +88,6 @@ const ManagePertanggungJawaban = () => {
       } else if (role === "Director") {
         await updateDoc(orderRef, { director_status: "Approved" });
       }
-
       await fetchOrders(); // Refresh the data
     } catch (error) {
       console.error("Error updating order:", error);
@@ -102,7 +100,7 @@ const ManagePertanggungJawaban = () => {
     setLoading(true);
     try {
       const orderRef = doc(db, databaseName, orderId);
-      await updateDoc(orderRef, { status: "rejected" });
+      await updateDoc(orderRef, { status: "Rejected" });
       await fetchOrders(); // Refresh the data
     } catch (error) {
       console.error("Error updating order:", error);
@@ -142,78 +140,59 @@ const ManagePertanggungJawaban = () => {
         orders.map((order) => (
           <View key={order.id} style={styles.orderContainer}>
             <Text style={styles.subHeader}>Order ID: {order.id}</Text>
-            <View style={styles.table}>
-              <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>
-                  Nama Barang
-                </Text>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>
-                  Quantity
-                </Text>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>
-                  Satuan
-                </Text>
-                <Text style={styles.tableHeader}>Keterangan</Text>
-              </View>
-              {Object.values(order).map((item, index) =>
-                item && item.satuan_harga && item.uraian ? (
+            <ScrollView horizontal>
+              <View style={styles.table}>
+                <View style={styles.tableRow}>
+                  <Text style={[styles.tableHeader, styles.columnBorder]}>Uraian</Text>
+                  <Text style={[styles.tableHeader, styles.columnBorder]}>Jumlah Barang</Text>
+                  <Text style={[styles.tableHeader, styles.columnBorder]}>Satuan Harga</Text>
+                  <Text style={[styles.tableHeader, styles.columnBorder]}>Harga Akhir</Text>
+                  <Text style={[styles.tableHeader, styles.columnBorder]}>Tambahan</Text>
+                  <Text style={[styles.tableHeader, styles.columnBorder]}>CC</Text>
+                  <Text style={[styles.tableHeader, styles.columnBorder]}>Date</Text>
+                  <Text style={[styles.tableHeader, styles.columnBorder]}>Director Status</Text>
+                  <Text style={styles.tableHeader}>Procurement Status</Text>
+                </View>
+                {order.barang && order.barang.map((item, index) => (
                   <View key={index} style={styles.tableRow}>
-                    <Text style={[styles.tableCell, styles.columnBorder]}>
-                      {item.satuan_harga}
+                    <Text style={[styles.tableCell, styles.columnBorder]}>{item.uraian || "-"}</Text>
+                    <Text style={[styles.tableCell, styles.columnBorder]}>{item.jumlah_barang || "-"}</Text>
+                    <Text style={[styles.tableCell, styles.columnBorder]}>{item.satuan_harga || "-"}</Text>
+                    <Text style={[styles.tableCell, styles.columnBorder]}>{item.harga_akhir || "-"}</Text>
+                    <View style={[styles.tableCell, styles.columnBorder]}>
+                      {item.tambahan && item.tambahan.map((add, idx) => (
+                        <Text key={idx}>
+                          {add.description} ({add.jumlah} x {add.harga})
+                        </Text>
+                      ))}
+                    </View>
+                    <Text style={[styles.tableCell, styles.columnBorder]}>{order.cc || "-"}</Text>
+                    <Text style={[styles.tableCell, styles.columnBorder]}>{order.date || "-"}</Text>
+                    <Text style={[styles.tableCell, styles.columnBorder, order.director_status === "Approved" ? styles.statusApproved : styles.statusPending]}>
+                      {order.director_status || "-"}
                     </Text>
-                    <Text style={[styles.tableCell, styles.columnBorder]}>
-                      {item.uraian}
+                    <Text style={[styles.tableCell, order.procurement_status === "Approved" ? styles.statusApproved : styles.statusPending]}>
+                      {order.procurement_status || "-"}
                     </Text>
                   </View>
-                ) : null
-              )}
-              <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>
-                  Date
-                </Text>
-                <Text style={styles.tableCell} colSpan={3}>
-                  {order.date}
-                </Text>
+                ))}
               </View>
-
-              <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>
-                  CC
-                </Text>
-                <Text style={styles.tableCell} colSpan={3}>
-                  {order.cc}
-                </Text>
-              </View>
-              <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, styles.columnBorder]}>
-                  Status
-                </Text>
-                <Text style={styles.tableCell} colSpan={3}>
-                  {order.procurement_status}
-                </Text>
-              </View>
-            </View>
+            </ScrollView>
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={[styles.button, styles.approveButton]}
                 onPress={() => confirmApprove(order.id)}
-                disabled={order.status === "approved"}
+                disabled={order.procurement_status === "Approved" || order.director_status === "Approved"}
               >
-                <Image
-                  source={require("../assets/images/check.png")}
-                  style={styles.buttonIcon}
-                />
+                <Image source={require("../assets/images/check.png")} style={styles.buttonIcon} />
                 <Text style={styles.buttonText}>Approve</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.button, styles.rejectButton]}
                 onPress={() => confirmReject(order.id)}
-                disabled={order.status === "rejected"}
+                disabled={order.status === "Rejected"}
               >
-                <Image
-                  source={require("../assets/images/cross.png")}
-                  style={styles.buttonIcon}
-                />
+                <Image source={require("../assets/images/cross.png")} style={styles.buttonIcon} />
                 <Text style={styles.buttonText}>Reject</Text>
               </TouchableOpacity>
             </View>
@@ -246,6 +225,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 5,
     overflow: "hidden",
+    width: 1000, // Adjust width as necessary
   },
   tableRow: {
     flexDirection: "row",
@@ -258,7 +238,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 13.5,
     backgroundColor: "#f0f0f0",
-    color: "#000000",
     textAlign: "center",
     borderRightWidth: 1,
     borderColor: "#ccc",
@@ -267,8 +246,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     textAlign: "center",
-    color: "#000000",
-    flexWrap: "wrap", // Allows the text to wrap
     borderRightWidth: 1,
     borderColor: "#ccc",
   },
@@ -302,6 +279,12 @@ const styles = StyleSheet.create({
   columnBorder: {
     borderRightWidth: 1,
     borderColor: "#ccc",
+  },
+  statusApproved: {
+    color: "green",
+  },
+  statusPending: {
+    color: "orange",
   },
 });
 
