@@ -196,15 +196,7 @@ const BuatPertanggungJawaban = () => {
         <Text>Procurement Status: {order.procurement_status}</Text>
         <Text>Keperluan: {order.keperluan}</Text>
       </View>
-      {savedData && (
-        <View style={styles.savedDataContainer}>
-          <Text style={styles.subHeader}>Saved Data:</Text>
-          <Text>{JSON.stringify(savedData, null, 2)}</Text>
-        </View>
-      )}
-      <TouchableOpacity style={styles.buttonText} onPress={saveOrderData}>
-        <Text>Save Order Data</Text>
-      </TouchableOpacity>
+      
       <Text style={styles.subHeader}>Item Details:</Text>
       {getItemKeys(order).map((key) => (
         <View key={key} style={styles.itemContainer}>
