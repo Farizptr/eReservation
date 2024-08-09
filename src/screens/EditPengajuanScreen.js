@@ -195,7 +195,6 @@ const EditPengajuan = () => {
           </View>
           <View style={styles.row}>
             <Text style={styles.label}>Jumlah Barang:</Text>
-            <Text style={styles.label}>Jumlah Barang:</Text>
             <TextInput
               style={styles.input}
               value={order.jumlah_barang}

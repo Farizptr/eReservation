@@ -1,4 +1,3 @@
-// src/screens/LoginScreen.js
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -9,13 +8,12 @@ import {
   ImageBackground,
   Image,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
-import { TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import useAuth from "../hooks/useAuth";
 import useRoleNavigation from "../hooks/useRoleNavigation";
-import { useNavigation } from "@react-navigation/native";
-import { useRole } from "../context/RoleContext.js";
-
+import { useRole } from "../context/RoleContext";
 
 const LoginScreen = () => {
   // Initialize state variables
@@ -27,7 +25,6 @@ const LoginScreen = () => {
   const { login, loading } = useAuth();
   const { role } = useRole();
   const navigateBasedOnRole = useRoleNavigation();
-
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -44,11 +41,8 @@ const LoginScreen = () => {
   }, [navigation, role]);
 
   if (role !== null) {
-    // Prevent the component from rendering if role not included
     return null;
   }
-
-
 
   // Function to validate form fields
   const validateForm = () => {
@@ -74,13 +68,13 @@ const LoginScreen = () => {
   // Function to handle login
   const handleLogin = async () => {
     if (!validateForm()) return;
-    
+
     try {
       const userRole = await login(username, password);
       navigateBasedOnRole(userRole);
     } catch (error) {
       console.log("Error during login:", error);
-    } finally {   
+    } finally {
       setUsername("");
       setPassword("");
     }
@@ -98,10 +92,10 @@ const LoginScreen = () => {
       />
 
       <View style={styles.overlay}>
-      <Image
-        source={require("../assets/images/ereserv.png")}
-        style={styles.title1}
-      />
+        <Image
+          source={require("../assets/images/ereserv.png")}
+          style={styles.title1}
+        />
         <Text style={styles.title}>Please login to access</Text>
         <TextInput
           style={styles.input}

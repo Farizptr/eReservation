@@ -65,7 +65,7 @@ const CetakUMScreen = () => {
   }
 
   const handleDownloadPDF = (orderId, filename) => {
-    const fileUrl = `http://172.20.10.4:5000/pdf/pemesanan/${orderId}`;
+    const fileUrl = `http://172.20.10.4:5000/pdf/pengajuan/${orderId}`;
     downloadFile(fileUrl, filename);
   };
 
