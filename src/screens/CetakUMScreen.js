@@ -7,23 +7,21 @@ import {
   ScrollView,
   ActivityIndicator,
   Image,
-  Alert
+  Alert,
 } from "react-native";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebase.js";
 import { useRole } from "../context/RoleContext.js";
 import { downloadFile } from "../utils/ExportPDF.js";
 import { useNavigation } from "@react-navigation/native";
-import fetchData from "../utils/fetchData.js";
 
 const CetakUMScreen = () => {
   const navigation = useNavigation();
   const [data, setData] = useState([]);
-
   const { role } = useRole();
   const databaseName = "data_pengajuan";
   const [loading, setLoading] = useState(false);
-  const allowedRoles = ["Finance"];
+  const allowedRoles = ["Director", "Head of Finance", "Finance"];
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -60,7 +58,7 @@ const CetakUMScreen = () => {
     });
 
     return unsubscribe;
-  }, [navigation, role, allowedRoles, fetchOrders]);
+  }, [navigation, role, allowedRoles]);
 
   if (!allowedRoles.includes(role)) {
     return null;
@@ -79,26 +77,23 @@ const CetakUMScreen = () => {
       ) : data.length > 0 ? (
         data.map((order) => (
           <View key={order.id} style={styles.orderContainer}>
-            <Text style={styles.orderId}>Order ID: {order.id}</Text>
+            <Text style={styles.orderId}>Pengajuan ID: {order.id}</Text>
             <View style={styles.table}>
               <View style={styles.tableRow}>
-                <Text style={styles.tableHeader}>Nama Barang</Text>
+                <Text style={styles.tableHeader}>Uraian</Text>
                 <Text style={styles.tableHeader}>Quantity</Text>
-                <Text style={styles.tableHeader}>Satuan</Text>
-                <Text style={styles.tableHeader}>Keterangan</Text>
+                <Text style={styles.tableHeader}>Harga Satuan</Text>
               </View>
-              {Object.values(order).map((item, index) =>
-                item.nama_barang &&
-                item.quantity &&
-                item.satuan &&
-                item.keterangan ? (
+              {Object.keys(order).filter(key => !isNaN(key)).length > 0 ? (
+                Object.keys(order).filter(key => !isNaN(key)).map((key, index) => (
                   <View key={index} style={styles.tableRow}>
-                    <Text style={styles.tableCell}>{item.nama_barang}</Text>
-                    <Text style={styles.tableCell}>{item.quantity}</Text>
-                    <Text style={styles.tableCell}>{item.satuan}</Text>
-                    <Text style={styles.tableCell}>{item.keterangan}</Text>
+                    <Text style={styles.tableCell}>{order[key].uraian}</Text>
+                    <Text style={styles.tableCell}>{order[key].jumlah_barang}</Text>
+                    <Text style={styles.tableCell}>{order[key].satuan_harga}</Text>
                   </View>
-                ) : null
+                ))
+              ) : (
+                <Text style={styles.tableCell}>Data tidak tersedia</Text>
               )}
               <View style={styles.tableRow}>
                 <Text style={styles.tableHeader}>Date</Text>
@@ -107,15 +102,15 @@ const CetakUMScreen = () => {
                 </Text>
               </View>
               <View style={styles.tableRow}>
-                <Text style={styles.tableHeader}>Division</Text>
+                <Text style={styles.tableHeader}>Keperluan</Text>
                 <Text style={styles.tableCell} colSpan={3}>
-                  {order.division}
+                  {order.keperluan}
                 </Text>
               </View>
               <View style={styles.tableRow}>
                 <Text style={styles.tableHeader}>Status</Text>
                 <Text style={styles.tableCell} colSpan={3}>
-                  {order.status}
+                  {order.procurement_status || order.director_status}
                 </Text>
               </View>
             </View>
@@ -127,7 +122,7 @@ const CetakUMScreen = () => {
                 }
               >
                 <Image
-                  source={require("../assets/images/download.png")} // Ganti dengan URL ikon yang sesuai
+                  source={require("../assets/images/download.png")}
                   style={styles.icon}
                 />
                 <Text style={styles.downloadText}>Download</Text>
@@ -186,7 +181,7 @@ const styles = StyleSheet.create({
   },
   downloadButton: {
     flexDirection: "row",
-    alignItems: "right",
+    alignItems: "center",
     backgroundColor: "#38B6FF",
     padding: 10,
     borderRadius: 5,
