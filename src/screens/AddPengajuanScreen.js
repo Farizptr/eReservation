@@ -318,9 +318,12 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: "#38B6FF",
-    padding: 10,
+    paddingVertical: 15, // Ensure the same vertical padding as placeOrderButton
+    paddingHorizontal: 20, // Ensure the same horizontal padding as placeOrderButton
     borderRadius: 5,
     alignItems: "center",
+    flex: 1,
+    marginRight: 10, // Add margin to the right
   },
   addButtonText: {
     color: "#fff",
@@ -328,9 +331,12 @@ const styles = StyleSheet.create({
   },
   placeOrderButton: {
     backgroundColor: "#4CAF50",
-    padding: 15,
+    paddingVertical: 15, // Ensure the same vertical padding as addButton
+    paddingHorizontal: 20, // Ensure the same horizontal padding as addButton
     borderRadius: 5,
     alignItems: "center",
+    flex: 1,
+    marginLeft: 10, // Add margin to the left
   },
   placeOrderButtonText: {
     color: "#fff",
@@ -339,7 +345,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 20,
+    marginTop: 1,
   },
   modalContent: {
     flex: 1,
