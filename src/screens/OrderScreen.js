@@ -496,31 +496,35 @@ const styles = StyleSheet.create({
 export default function App() {
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size }) => {
-          let iconSource;
+  screenOptions={({ route }) => ({
+    tabBarIcon: ({ color, size }) => {
+      let iconSource;
 
-          if (route.name === "Pesanan") {
-            iconSource = orderIcon;
-          } else if (route.name === "Pesanan Anda") {
-            iconSource = listIcon;
-          }
+      if (route.name === "Pesanan") {
+        iconSource = orderIcon;
+      } else if (route.name === "Pesanan Anda") {
+        iconSource = listIcon;
+      }
 
-          return (
-            <Image
-              source={iconSource}
-              style={{ width: size, height: size, tintColor: color }}
-            />
-          );
-        },
-      })}
-      tabBarOptions={{
-        activeTintColor: "#38B6FF",
-        inactiveTintColor: "gray",
-      }}
-    >
-      <Tab.Screen name="Pesanan" component={OrderScreen} />
-      <Tab.Screen name="Pesanan Anda" component={YourOrderScreen} />
-    </Tab.Navigator>
+      return (
+        <Image
+          source={iconSource}
+          style={{ width: size, height: size, tintColor: color }}
+        />
+      );
+    },
+    tabBarActiveTintColor: "#38B6FF",
+    tabBarInactiveTintColor: "gray",
+    tabBarStyle: [
+      {
+        display: "flex"
+      },
+      null
+    ]
+  })}
+>
+  <Tab.Screen name="Pesanan" component={OrderScreen} />
+  <Tab.Screen name="Pesanan Anda" component={YourOrderScreen} />
+</Tab.Navigator>
   );
 }
