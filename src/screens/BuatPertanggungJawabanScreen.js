@@ -11,14 +11,16 @@ import {
 } from "react-native";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import { useRoute } from "@react-navigation/native";
+import { useRoute,useNavigation } from "@react-navigation/native";
 
 const BuatPertanggungJawaban = () => {
   const route = useRoute();
+  const navigation = useNavigation();
   const { order } = route.params;
   const [savedData, setSavedData] = useState(null);
   const [lastOrderId, setLastOrderId] = useState(null);
   const [itemData, setItemData] = useState({});
+  const [noACCT, setNoACCT] = useState("");
 
   const getItemKeys = (order) => {
     return Object.keys(order).filter((key) => !isNaN(parseInt(key)));
@@ -53,12 +55,12 @@ const BuatPertanggungJawaban = () => {
     setItemData(initialData);
   }, [order]);
 
-  const handleInputChange = (key, value) => {
+  const handleInputChange = (key, value, type) => {
     setItemData((prevData) => ({
       ...prevData,
       [key]: {
         ...prevData[key],
-        input: value,
+        [type]: value,
       },
     }));
   };
@@ -144,6 +146,7 @@ const BuatPertanggungJawaban = () => {
         jumlah_barang: order[key].jumlah_barang,
         satuan_harga: order[key].satuan_harga,
         harga_akhir: itemData[key]?.input || order[key].satuan_harga,
+        toko : itemData[key]?.toko || "",
         uraian: order[key].uraian,
         tambahan: itemData[key]?.additionalData.map((data) => ({
           description: data.description,
@@ -155,6 +158,7 @@ const BuatPertanggungJawaban = () => {
       date: formattedDate,
       procurement_status: "Pending", // Replace with actual value
       director_status: "Pending", // Replace with actual value
+      noACCT: noACCT,
     };
 
     // Save or send dataToSave to the desired location
@@ -181,6 +185,7 @@ const BuatPertanggungJawaban = () => {
       setLastOrderId(newOrderId);
 
       Alert.alert("Success", "Request have been added successfully.");
+      navigation.navigate("Admin");
     } catch (error) {
       Alert.alert("Error", "Failed to add Requests. Please try again.");
       console.error("Error adding orders: ", error);
@@ -201,6 +206,12 @@ const BuatPertanggungJawaban = () => {
 
 
       <Text style={styles.header}>Item Details:</Text>
+      <TextInput
+        value={noACCT}
+        onChangeText={setNoACCT}
+        placeholder="Enter No ACCT"
+        style={styles.input}
+      />
       {getItemKeys(order).map((key) => (
         <View key={key} style={styles.itemContainer}>
           <Text style={styles.itemHeader}>Item {parseInt(key) + 1}</Text>
@@ -213,8 +224,15 @@ const BuatPertanggungJawaban = () => {
               style={styles.input}
               keyboardType="numeric"
               value={itemData[key]?.input}
-              onChangeText={(text) => handleInputChange(key, text)}
+              onChangeText={(text) => handleInputChange(key, text, "input")}
               placeholder="Enter amount"
+            />
+            <Text>Toko:</Text>
+            <TextInput
+              style={styles.input}
+              value={itemData[key]?.toko}
+              onChangeText={(text) => handleInputChange(key, text, "toko")}
+              placeholder="Enter Toko"
             />
           </View>
 
