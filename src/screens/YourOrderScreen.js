@@ -127,7 +127,7 @@ const YourOrderScreen = () => {
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalHeader}>Status Pesanan</Text>
-              <Text style={styles.modalText}>Order ID: {selectedOrder.id}</Text>
+              <Text style={styles.modalText}>Pesanan ID: {selectedOrder.id}</Text>
               <Text style={styles.modalText}>Status: {selectedOrder.status}</Text>
               <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
                 <Text style={styles.buttonText}>Tutup</Text>
