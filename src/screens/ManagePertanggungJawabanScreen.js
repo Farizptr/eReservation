@@ -139,7 +139,7 @@ const ManagePertanggungJawaban = () => {
       ) : orders.length > 0 ? (
         orders.map((order) => (
           <View key={order.id} style={styles.orderContainer}>
-            <Text style={styles.subHeader}>Order ID: {order.id}</Text>
+            <Text style={styles.subHeader}>PTJ ID: {order.id}</Text>
             <ScrollView horizontal>
               <View style={styles.table}>
                 <View style={styles.tableRow}>
@@ -199,7 +199,7 @@ const ManagePertanggungJawaban = () => {
           </View>
         ))
       ) : (
-        <Text>No orders available.</Text>
+        <Text>No PTJ available.</Text>
       )}
     </ScrollView>
   );

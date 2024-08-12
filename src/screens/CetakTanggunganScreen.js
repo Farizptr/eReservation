@@ -7,19 +7,17 @@ import {
   ScrollView,
   ActivityIndicator,
   Image,
-  Alert
+  Alert,
 } from "react-native";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebase.js";
 import { useRole } from "../context/RoleContext.js";
 import { downloadFile } from "../utils/ExportPDF.js";
 import { useNavigation } from "@react-navigation/native";
-import fetchData from "../utils/fetchData.js";
 
 const CetakTanggungan = () => {
   const navigation = useNavigation();
   const [data, setData] = useState([]);
-
   const { role } = useRole();
   const databaseName = "data_pertanggungjawaban";
   const [loading, setLoading] = useState(false);
@@ -72,7 +70,7 @@ const CetakTanggungan = () => {
     });
 
     return unsubscribe;
-  }, [navigation, role, allowedRoles, fetchOrders]);
+  }, [navigation, role]);
 
   if (!allowedRoles.includes(role)) {
     return null;
@@ -91,27 +89,38 @@ const CetakTanggungan = () => {
       ) : data.length > 0 ? (
         data.map((order) => (
           <View key={order.id} style={styles.orderContainer}>
-            <Text style={styles.orderId}>Order ID: {order.id}</Text>
+            <Text style={styles.orderId}>Pesanan ID: {order.id}</Text>
             <View style={styles.table}>
               <View style={styles.tableRow}>
                 <Text style={styles.tableHeader}>Nama Barang</Text>
                 <Text style={styles.tableHeader}>Quantity</Text>
                 <Text style={styles.tableHeader}>Satuan</Text>
-                <Text style={styles.tableHeader}>Keterangan</Text>
+                <Text style={styles.tableHeader}>Harga Akhir</Text>
               </View>
-              {Object.values(order).map((item, index) =>
-                item.nama_barang &&
-                item.quantity &&
-                item.satuan &&
-                item.keterangan ? (
+              {order.barang &&
+                order.barang.map((item, index) => (
                   <View key={index} style={styles.tableRow}>
-                    <Text style={styles.tableCell}>{item.nama_barang}</Text>
-                    <Text style={styles.tableCell}>{item.quantity}</Text>
-                    <Text style={styles.tableCell}>{item.satuan}</Text>
-                    <Text style={styles.tableCell}>{item.keterangan}</Text>
+                    <Text style={styles.tableCell}>{item.uraian}</Text>
+                    <Text style={styles.tableCell}>{item.jumlah_barang}</Text>
+                    <Text style={styles.tableCell}>{item.satuan_harga}</Text>
+                    <Text style={styles.tableCell}>{item.harga_akhir}</Text>
                   </View>
-                ) : null
-              )}
+                ))}
+              <View style={styles.tableRow}>
+                <Text style={styles.tableHeader}>Tambahan</Text>
+                <Text style={styles.tableHeader} colSpan={3}>
+                  Keterangan
+                </Text>
+              </View>
+              {order.tambahan &&
+                order.tambahan.map((extra, index) => (
+                  <View key={index} style={styles.tableRow}>
+                    <Text style={styles.tableCell}>{extra.description}</Text>
+                    <Text style={styles.tableCell}>{extra.jumlah}</Text>
+                    <Text style={styles.tableCell}>{extra.harga}</Text>
+                    <Text style={styles.tableCell}>-</Text>
+                  </View>
+                ))}
               <View style={styles.tableRow}>
                 <Text style={styles.tableHeader}>Date</Text>
                 <Text style={styles.tableCell} colSpan={3}>
@@ -121,13 +130,13 @@ const CetakTanggungan = () => {
               <View style={styles.tableRow}>
                 <Text style={styles.tableHeader}>Division</Text>
                 <Text style={styles.tableCell} colSpan={3}>
-                  {order.division}
+                  {order.cc}
                 </Text>
               </View>
               <View style={styles.tableRow}>
                 <Text style={styles.tableHeader}>Status</Text>
                 <Text style={styles.tableCell} colSpan={3}>
-                  {order.status}
+                  {order.director_status} / {order.procurement_status}
                 </Text>
               </View>
             </View>
@@ -139,7 +148,7 @@ const CetakTanggungan = () => {
                 }
               >
                 <Image
-                  source={require("../assets/images/download.png")} // Ganti dengan URL ikon yang sesuai
+                  source={require("../assets/images/download.png")}
                   style={styles.icon}
                 />
                 <Text style={styles.downloadText}>Download</Text>
@@ -148,7 +157,7 @@ const CetakTanggungan = () => {
           </View>
         ))
       ) : (
-        <Text>No approved orders available.</Text>
+        <Text>No approved pesanan available.</Text>
       )}
     </ScrollView>
   );

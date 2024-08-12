@@ -206,7 +206,7 @@ const AddPengajuanScreen = () => {
       </View>
       {orders.map((order, index) => (
         <View key={index} style={styles.orderContainer}>
-          <Text style={styles.orderTitle}>Order {index + 1}</Text>
+          <Text style={styles.orderTitle}>Pengajuan {index + 1}</Text>
           <View style={styles.inputRow}>
             <Text style={styles.label}>Uraian:</Text>
             <TextInput
@@ -243,7 +243,7 @@ const AddPengajuanScreen = () => {
             style={styles.deleteButton}
             onPress={() => handleDeleteOrder(index)}
           >
-            <Text style={styles.deleteButtonText}>Delete Order</Text>
+            <Text style={styles.deleteButtonText}>Hapus Pengajuan</Text>
           </TouchableOpacity>
         </View>
       ))}
@@ -259,7 +259,7 @@ const AddPengajuanScreen = () => {
           {loading ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
-            <Text style={styles.placeOrderButtonText}>Place Order</Text>
+            <Text style={styles.placeOrderButtonText}>Ajukan Pengajuan</Text>
           )}
         </TouchableOpacity>
       </View>

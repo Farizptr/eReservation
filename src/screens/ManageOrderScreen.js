@@ -53,7 +53,7 @@ const ManageOrderScreen = () => {
       ) : data.length > 0 ? (
         data.map((order) => (
           <View key={order.id} style={styles.orderContainer}>
-            <Text style={styles.orderId}>Order ID: {order.id}</Text>
+            <Text style={styles.orderId}> Pesanan ID: {order.id}</Text>
             <View style={styles.table}>
               <View style={styles.tableRow}>
                 <Text style={styles.tableHeader}>Nama Barang</Text>
@@ -99,7 +99,7 @@ const ManageOrderScreen = () => {
           </View>
         ))
       ) : (
-        <Text>No approved orders available.</Text>
+        <Text>No approved Pesanan available.</Text>
       )}
     </ScrollView>
   );

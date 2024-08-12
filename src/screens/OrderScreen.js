@@ -180,7 +180,7 @@ const OrderScreen = () => {
     <Modal visible={showSummary} animationType="slide" transparent={true}>
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={styles.summaryTitle}>Order Summary</Text>
+          <Text style={styles.summaryTitle}>Pesanan Summary</Text>
           <ScrollView style={styles.scrollView}>
             <View style={styles.tableContainer}>
               <View style={styles.tableHeader}>

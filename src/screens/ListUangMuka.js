@@ -84,7 +84,7 @@ const ListUangMuka = () => {
       ) : data.length > 0 ? (
         data.map((order) => (
           <View key={order.id} style={styles.orderContainer}>
-            <Text style={styles.orderId}>Order ID: {order.id}</Text>
+            <Text style={styles.orderId}>UM ID: {order.id}</Text>
             <View style={styles.table}>
               {Object.keys(order).filter(key => !isNaN(key)).length > 0 ? (
                 Object.keys(order).filter(key => !isNaN(key)).map((key, index) => (
@@ -134,7 +134,7 @@ const ListUangMuka = () => {
           </View>
         ))
       ) : (
-        <Text>No approved orders available.</Text>
+        <Text>No approved UM available.</Text>
       )}
     </ScrollView>
   );

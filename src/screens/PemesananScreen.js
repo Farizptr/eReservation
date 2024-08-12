@@ -55,7 +55,7 @@ const ManageOrderScreen = () => {
       {data.length > 0 ? (
         data.map((order) => (
           <View key={order.id} style={styles.orderContainer}>
-            <Text style={styles.subHeader}>Order ID: {order.id}</Text>
+            <Text style={styles.subHeader}>Pesanan ID: {order.id}</Text>
             {/* Display the order data */}
             <Text style={styles.data}>{JSON.stringify(order, null, 2)}</Text>
             <View style={styles.buttonContainer}>
