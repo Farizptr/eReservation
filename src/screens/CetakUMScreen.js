@@ -21,7 +21,7 @@ const CetakUMScreen = () => {
   const { role } = useRole();
   const databaseName = "data_pengajuan";
   const [loading, setLoading] = useState(false);
-  const allowedRoles = ["Director", "Head of Finance", "Finance"];
+  const allowedRoles = ["Director", "Head of Finance", "Finance", "Head of Procurement",];
 
   const fetchOrders = async () => {
     setLoading(true);
