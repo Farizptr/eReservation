@@ -177,33 +177,28 @@ const ManagePengajuan = () => {
               </View>
             </View>
             <View style={styles.buttonContainer}>
+            <TouchableOpacity
+  style={[styles.button, styles.approveButton]}
+  onPress={() => handleApprove(order.id)}
+  disabled={order.status === "approved"}
+>
+  <Image
+    source={require("../assets/images/check.png")}
+    style={styles.buttonIcon}
+  />
+  <Text style={styles.buttonText}>Approve</Text>
+</TouchableOpacity>
               <TouchableOpacity
-                style={[styles.button, styles.approveButton]}
-
-                onPress={() => confirmApprove(order.id)}
-                disabled={order.status === "approved"}
-
-              >
-                <Image
-                  source={require("../assets/images/check.png")}
-                  style={styles.buttonIcon}
-                />
-                <Text style={styles.buttonText}>Approve</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, styles.rejectButton]}
-
-            
-
-                onPress={() => confirmReject(order.id)}
-                disabled={order.status === "rejected"}
-              >
-                <Image
-                  source={require("../assets/images/cross.png")}
-                  style={styles.buttonIcon}
-                />
-                <Text style={styles.buttonText}>Reject</Text>
-              </TouchableOpacity>
+  style={[styles.button, styles.rejectButton]}
+  onPress={() => handleReject(order.id)}
+  disabled={order.status === "rejected"}
+>
+  <Image
+    source={require("../assets/images/cross.png")}
+    style={styles.buttonIcon}
+  />
+  <Text style={styles.buttonText}>Reject</Text>
+</TouchableOpacity>
             </View>
           </View>
         ))

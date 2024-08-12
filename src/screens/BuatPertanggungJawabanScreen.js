@@ -196,7 +196,9 @@ const BuatPertanggungJawaban = () => {
         <Text>Procurement Status: {order.procurement_status}</Text>
         <Text>Keperluan: {order.keperluan}</Text>
       </View>
-      
+      <TouchableOpacity style={styles.buttonText} onPress={saveOrderData}>
+        <Text>Save Order Data</Text>
+      </TouchableOpacity>
       <Text style={styles.subHeader}>Item Details:</Text>
       {getItemKeys(order).map((key) => (
         <View key={key} style={styles.itemContainer}>
@@ -258,7 +260,10 @@ const BuatPertanggungJawaban = () => {
           >
             <Text style={styles.buttonText}>Add Others</Text>
           </TouchableOpacity>
+          
         </View>
+          
+       
       ))}
     </ScrollView>
   );
