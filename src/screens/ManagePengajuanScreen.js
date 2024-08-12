@@ -129,7 +129,7 @@ const ManagePengajuan = () => {
       ) : orders.length > 0 ? (
         orders.map((order) => (
           <View key={order.id} style={styles.orderContainer}>
-            <Text style={styles.subHeader}>Order ID: {order.id}</Text>
+            <Text style={styles.subHeader}>Pengajuan ID: {order.id}</Text>
             <View style={styles.table}>
               {Object.keys(order).filter(key => !isNaN(key)).length > 0 ? (
                 Object.keys(order).filter(key => !isNaN(key)).map((key, index) => (
@@ -203,7 +203,7 @@ const ManagePengajuan = () => {
           </View>
         ))
       ) : (
-        <Text>No orders available.</Text>
+        <Text>No Ajuan available.</Text>
       )}
     </ScrollView>
   );

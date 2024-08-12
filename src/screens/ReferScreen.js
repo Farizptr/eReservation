@@ -39,13 +39,13 @@ const ReferScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Approved Orders</Text>
+      <Text style={styles.header}>Approved Pesanan</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : data.length > 0 ? (
         data.map((order) => (
           <View key={order.id} style={styles.orderContainer}>
-            <Text style={styles.orderId}>Order ID: {order.id}</Text>
+            <Text style={styles.orderId}>Pesanan ID: {order.id}</Text>
             <View style={styles.table}>
               <View style={styles.tableRow}>
                 <Text style={styles.tableHeader}>Nama Barang</Text>
@@ -110,7 +110,7 @@ const ReferScreen = () => {
           </View>
         ))
       ) : (
-        <Text>No approved orders available.</Text>
+        <Text>No approved pesanan available.</Text>
       )}
     </ScrollView>
   );

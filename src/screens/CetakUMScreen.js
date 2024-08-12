@@ -71,7 +71,7 @@ const CetakUMScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Approved Orders</Text>
+      <Text style={styles.header}>Approved UM</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : data.length > 0 ? (
@@ -131,7 +131,7 @@ const CetakUMScreen = () => {
           </View>
         ))
       ) : (
-        <Text>No approved orders available.</Text>
+        <Text>No approved ajuan available.</Text>
       )}
     </ScrollView>
   );

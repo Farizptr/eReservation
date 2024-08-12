@@ -147,7 +147,7 @@ const EditPengajuan = () => {
     <ScrollView contentContainerStyle={styles.container}>
       {/* Display Order Details Table */}
       <View style={styles.orderDetailsContainer}>
-        <Text style={styles.header}>Order Details</Text>
+        <Text style={styles.header}>Pengajuan Details</Text>
         <View style={styles.table}>
           <View style={styles.tableRow}>
             <Text style={styles.tableHeader}>Nama Barang</Text>

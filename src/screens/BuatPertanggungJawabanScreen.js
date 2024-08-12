@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
+  Image,
   TouchableOpacity,
   Alert,
 } from "react-native";
@@ -183,22 +184,22 @@ const BuatPertanggungJawaban = () => {
       });
       setLastOrderId(newOrderId);
 
-      Alert.alert("Success", "Orders have been added successfully.");
+      Alert.alert("Success", "Request have been added successfully.");
     } catch (error) {
-      Alert.alert("Error", "Failed to add orders. Please try again.");
+      Alert.alert("Error", "Failed to add Requests. Please try again.");
       console.error("Error adding orders: ", error);
     }
   }
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.header}>Order Details</Text>
+      <Text style={styles.header}>Pengajuan Details</Text>
       <View style={styles.detailsContainer}>
-        <Text>Order ID: {order.id}</Text>
-        <Text>CC: {order.cc}</Text>
-        <Text>Date: {order.date}</Text>
-        <Text>Director Status: {order.director_status}</Text>
-        <Text>Procurement Status: {order.procurement_status}</Text>
-        <Text>Keperluan: {order.keperluan}</Text>
+        <Text style={styles.textInfo} >Pengajuan ID: {order.id}</Text>
+        <Text style={styles.textInfo}>CC: {order.cc}</Text>
+        <Text style={styles.textInfo}>Date: {order.date}</Text>
+        <Text style={styles.textInfo}>Director Status: {order.director_status}</Text>
+        <Text style={styles.textInfo}>Procurement Status: {order.procurement_status}</Text>
+        <Text style={styles.textInfo}>Keperluan: {order.keperluan}</Text>
       </View>
       <TouchableOpacity style={styles.buttonText} onPress={saveOrderData}>
         <Text>Save Order Data</Text>
@@ -280,6 +281,7 @@ const BuatPertanggungJawaban = () => {
           >
             <Text style={styles.buttonText}>Add Others</Text>
           </TouchableOpacity>
+          
         </View>
       ))}
     </ScrollView>
@@ -291,10 +293,18 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
+  textInfo:{
+    marginLeft: 50,
+    fontSize: 15,
+    fontStyle: "italic",
+    marginBottom: 20,
+    fontWeight: "bold",
+  },
   header: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 16,
+    marginBottom: 25,
+    marginTop: 16,
   },
   subHeader: {
     fontSize: 20,
@@ -302,10 +312,26 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 8,
   },
+  button: {
+    marginTop: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 15,
+    borderRadius: 5,
+  },
+  approveButton: {
+    backgroundColor: "#38B6FF",
+  },
+  buttonIcon: {
+    width: 18,
+    height: 18,
+    marginRight: 5,
+  },
   detailsContainer: {
     backgroundColor: "#f0f0f0",
     padding: 16,
     borderRadius: 8,
+    
     marginBottom: 16,
   },
   itemContainer: {
