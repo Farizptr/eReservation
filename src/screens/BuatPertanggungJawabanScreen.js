@@ -19,8 +19,6 @@ const BuatPertanggungJawaban = () => {
   const [savedData, setSavedData] = useState(null);
   const [lastOrderId, setLastOrderId] = useState(null);
   const [itemData, setItemData] = useState({});
-  const [toko, setToko] = useState("");
-  const [noACCT, setNoACCT] = useState("");
 
   const getItemKeys = (order) => {
     return Object.keys(order).filter((key) => !isNaN(parseInt(key)));
@@ -55,12 +53,12 @@ const BuatPertanggungJawaban = () => {
     setItemData(initialData);
   }, [order]);
 
-  const handleInputChange = (key, value, field) => {
+  const handleInputChange = (key, value) => {
     setItemData((prevData) => ({
       ...prevData,
       [key]: {
         ...prevData[key],
-        [field]: value,
+        input: value,
       },
     }));
   };
@@ -145,7 +143,6 @@ const BuatPertanggungJawaban = () => {
       barang: getItemKeys(order).map((key) => ({
         jumlah_barang: order[key].jumlah_barang,
         satuan_harga: order[key].satuan_harga,
-        toko: itemData[key]?.quantity || toko,
         harga_akhir: itemData[key]?.input || order[key].satuan_harga,
         uraian: order[key].uraian,
         tambahan: itemData[key]?.additionalData.map((data) => ({
@@ -154,7 +151,6 @@ const BuatPertanggungJawaban = () => {
           jumlah: data.jumlah,
         })),
       })),
-      noACCT: noACCT,
       cc: order.cc, // Replace with actual value
       date: formattedDate,
       procurement_status: "Pending", // Replace with actual value
@@ -201,40 +197,24 @@ const BuatPertanggungJawaban = () => {
         <Text style={styles.textInfo}>Procurement Status: {order.procurement_status}</Text>
         <Text style={styles.textInfo}>Keperluan: {order.keperluan}</Text>
       </View>
-      <TouchableOpacity style={styles.buttonText} onPress={saveOrderData}>
-        <Text>Save Order Data</Text>
-      </TouchableOpacity>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          value={noACCT}
-          onChangeText={setNoACCT}
-          placeholder="Enter No ACCT"
-        />
-      </View>
-      <Text style={styles.subHeader}>Item Details:</Text>
+      
+
+
+      <Text style={styles.header}>Item Details:</Text>
       {getItemKeys(order).map((key) => (
         <View key={key} style={styles.itemContainer}>
           <Text style={styles.itemHeader}>Item {parseInt(key) + 1}</Text>
           <Text>Uraian: {order[key].uraian}</Text>
           <Text>Jumlah Barang: {order[key].jumlah_barang}</Text>
           <Text>Satuan Harga: {order[key].satuan_harga}</Text>
-
           <View style={styles.inputContainer}>
-            <Text>Harga asli:</Text>
+            <Text>Input Amount:</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
               value={itemData[key]?.input}
-              onChangeText={(text) => handleInputChange(key, text, "input")}
+              onChangeText={(text) => handleInputChange(key, text)}
               placeholder="Enter amount"
-            />
-            <Text>Toko :</Text>
-            <TextInput
-              style={styles.input}
-              value={itemData[key]?.quantity || ""}
-              onChangeText={(text) => handleInputChange(key, text, "quantity")}
-              placeholder="Enter toko"
             />
           </View>
 
@@ -282,7 +262,22 @@ const BuatPertanggungJawaban = () => {
             <Text style={styles.buttonText}>Add Others</Text>
           </TouchableOpacity>
           
+          
+      <TouchableOpacity
+                style={[styles.button, styles.approveButton]}
+                onPress={saveOrderData}
+              >
+                <Image
+                  source={require("../assets/images/check.png")}
+                  style={styles.buttonIcon}
+                />
+                <Text style={styles.buttonText}>Buat PTJ</Text>
+              </TouchableOpacity>
+
+
         </View>
+          
+       
       ))}
     </ScrollView>
   );
