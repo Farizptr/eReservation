@@ -1,205 +1,123 @@
-import React, { useState } from "react";
-import { TouchableOpacity } from "react-native";
-import { View, Text, TextInput, ScrollView, StyleSheet } from "react-native";
-import { collection, addDoc } from "firebase/firestore";
-import { db } from "../../firebase"; // Adjust the import path if needed
+import React from "react";
+import { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Alert,
+  ImageBackground,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { useRole } from "../context/RoleContext";
 
 const PengajuanScreen = () => {
+  const navigation = useNavigation();
   const { role } = useRole();
-  const [keperluan, setKeperluan] = useState("");
+  const [hasAccess, setHasAccess] = useState(true);
 
-  const [pengajuan, setPengajuan] = useState([
-    {
-      uraian: "",
-      jumlah: "",
-      satuan_harga: "",
-    },
-  ]);
+  const allowedRoles = ["Head of Procurement", "Procurement"];
 
-  const handlePengajuanOrder = () => {
-    setPengajuan([
-      ...pengajuan,
-      {
-        uraian: "",
-        jumlah: "",
-        satuan_harga: "",
-      },
-    ]);
-  };
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      if (!allowedRoles.includes(role)) {
+        Alert.alert(
+          "Access Denied",
+          "You are not authorized to access this page",
+          [{ text: "OK", onPress: () => navigation.navigate("Home") }]
+        );
+      }
+    });
 
-  const handlePengajuanChange = (text, index, field) => {
-    const newPengajuan = [...pengajuan];
-    newPengajuan[index][field] = text;
-    setPengajuan(newPengajuan);
-  };
-  function formatDate(date) {
-    const day = date.getDate();
-    const monthNames = [
-      "Januari",
-      "Februari",
-      "Maret",
-      "April",
-      "Mei",
-      "Juni",
-      "Juli",
-      "Agustus",
-      "September",
-      "Oktober",
-      "November",
-      "Desember",
-    ];
-    const monthIndex = date.getMonth(); // getMonth() returns a zero-based index
-    const year = date.getFullYear();
+    return unsubscribe;
+  }, [navigation, role, allowedRoles]);
 
-    return `${day} ${monthNames[monthIndex]} ${year}`;
+  if (!allowedRoles.includes(role)) {
+    return null;
   }
-  const handlePlacePengajuan = async () => {
-    console.log("Role: ", role);
-    let modifiedPengajuan = { ...pengajuan }; // Copy the orders object
-    let databaseName = "data_pengajuan";
-    const currentDate = new Date(); // Step 1 & 2: Get current date in ISO string format
-    const formattedDate = formatDate(currentDate);
-    console.log(formattedDate);
-    modifiedPengajuan.date = formattedDate;
-    modifiedPengajuan.keperluan = keperluan;
 
-    switch (role) {
-      case "Procurement":
-        modifiedPengajuan.headProcurementapproved = false;
-        modifiedPengajuan.directorapproved = false;
-        break;
+  const buttons = [
+    {
+      screen: "Refer",
+      image: require("../assets/images/refer.png"),
+    },
+    {
+      screen: "AddPengajuan",
+      image: require("../assets/images/addpengajuan.png"),
+    },
+  ];
 
-      default:
-        console.log("Role not recognized");
-        return; // Exit the function if the role is not recognized
-    }
-
-    console.log("Modified Orders: ", modifiedPengajuan);
-
-    try {
-      const ordersCollection = collection(db, databaseName); // Reference to 'orders' collection
-      // Add the entire orders array as one document in the "orders" collection
-      await addDoc(ordersCollection, { modifiedPengajuan });
-
-      console.log("Orders have been added successfully.");
-      // Optionally, you can clear the form after successful submission
-      setPengajuan([
-        {
-          uraian: "",
-          jumlah: "",
-          satuan_harga: "",
-        },
-      ]);
-      setKeperluan("");
-    } catch (error) {
-      console.error("Error adding orders: ", error);
-    }
-  };
-
-  const handleDeletePengajuan = (index) => {
-    const newPengajuan = [...pengajuan];
-    newPengajuan.splice(index, 1);
-    setPengajuan(newPengajuan);
-  };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text>Keperluan</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Keperluan"
-        value={keperluan}
-        onChangeText={(text) => setKeperluan(text)}
-      />
-      {pengajuan.map((item, index) => (
-        <View key={index} style={styles.orderInputContainer}>
-          <Text>Uraian</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Urairan"
-            value={item.uraian}
-            onChangeText={(text) =>
-              handlePengajuanChange(text, index, "uraian")
-            }
-          />
-          <Text>Jumlah</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Jumlah"
-            keyboardType="numeric"
-            value={item.jumlah}
-            onChangeText={(text) =>
-              handlePengajuanChange(text, index, "jumlah")
-            }
-          />
-          <Text>Harga Satuan</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Satuan harga"
-            keyboardType="numeric"
-            value={item.satuan_harga}
-            onChangeText={(text) =>
-              handlePengajuanChange(text, index, "satuan_harga")
-            }
-          />
+    <ImageBackground
+      source={require("../assets/images/backgroundfix.png")}
+      style={styles.backgroundImage}
+    >
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.text}>Admin Only</Text>
+        {buttons.map((button, index) => (
           <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={() => handleDeletePengajuan(index)}
+            key={index}
+            style={styles.button}
+            onPress={() => navigation.navigate(button.screen)}
           >
-            <Text style={styles.deleteButtonText}>Delete</Text>
+            <ImageBackground
+              source={button.image}
+              style={styles.buttonBackground}
+              imageStyle={styles.buttonImage}
+            >
+              <Text style={styles.buttonText}>{button.title}</Text>
+            </ImageBackground>
           </TouchableOpacity>
-        </View>
-      ))}
-      <TouchableOpacity style={styles.button} onPress={handlePengajuanOrder}>
-        <Text style={styles.buttonText}>Add another order</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={handlePlacePengajuan}>
-        <Text style={styles.buttonText}>Place Order</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        ))}
+      </ScrollView>
+    </ImageBackground>
   );
 };
+
 const styles = StyleSheet.create({
+  backgroundImage: {
+    width: 415,
+    height: 800,
+    justifyContent: "center",
+    alignItems: "left",
+  },
   container: {
     padding: 20,
-    backgroundColor: "#f5f5f5",
-  },
-  input: {
-    width: "100%",
-    padding: 15,
-    marginVertical: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    alignItems: "center",
   },
   button: {
+    marginVertical: 250,
+    marginTop: 30,
+    marginBottom: 20,
+    width: 360,
+    height: 98,
+  },
+  buttonBackground: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#007bff",
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 5,
+  },
+  buttonImage: {
+    borderRadius: 10,
+    resizeMode: "cover",
+  },
+  text: {
+    marginTop: 100,
+    paddingBottom: 40,
+    fontSize: 24,
+    fontweight: "bold",
+    color: "yellow",
   },
   buttonText: {
-    color: "#fff",
+    fontSize: 20,
     fontWeight: "bold",
-  },
-  deleteButton: {
-    alignItems: "center",
-    backgroundColor: "#ff6347",
-    padding: 10,
+    color: "#FFFFFF",
+    textAlign: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 5,
-    marginVertical: 5,
-  },
-  deleteButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
   },
 });
 

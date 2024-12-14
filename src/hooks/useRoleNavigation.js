@@ -8,19 +8,8 @@ const useRoleNavigation = () => {
   //
   const navigateBasedOnRole = (role) => {
     switch (role) {
-      case 'Procurement':
-        break;
-      case 'Head of Procurement':
-        navigation.navigate('Procurement');
-        break;
-      case 'Director':
-        navigation.navigate('Director');
-        break;
-      case 'Finance':
-        navigation.navigate('Keuangan');
-        break;
       default:
-        navigation.navigate('Order');
+        navigation.navigate('Home');
         break;
     }
     Alert.alert('Login Successful', `You have been logged in as ${role}!`);

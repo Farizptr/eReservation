@@ -10,7 +10,13 @@ export default function CustomDrawerContent(props) {
   const handleLogout = useLogout();
   const navigation = useNavigation();
   const handleLogin = () => { navigation.navigate("Login") };
+  const handleNavigateToHome = () => {
+    navigation.navigate('Home');
+  };
 
+  const handleNavigateToAdmin = () => {
+    navigation.navigate('Admin');
+  };
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.header}>
@@ -22,7 +28,16 @@ export default function CustomDrawerContent(props) {
       </View>
       
       <View style={styles.divider} />
-      <DrawerItemList {...props} />
+      {/* <DrawerItemList {...props} /> */}
+      <View style={styles.navigationButtons}>
+        <TouchableOpacity onPress={handleNavigateToHome} style={styles.navigationButton}>
+          <Text style={styles.navigationButtonText}>Back to Home Screen</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleNavigateToAdmin} style={styles.navigationButton}>
+          <Text style={styles.navigationButtonText}>Back to Admin Screen</Text>
+        </TouchableOpacity>
+      </View>
+      
       <View style={styles.footer}>
         {role ? (
           <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
@@ -53,6 +68,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
+  },
+  navigationButtons: {
+    padding: 10,
+  },
+  navigationButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  navigationButtonText: {
+    fontSize: 16,
   },
   divider: {
     height: 1,
